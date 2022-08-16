@@ -1,0 +1,20 @@
+name: ReadMe Micro
+author: ReadMe
+branding:
+  color: blue
+  icon: book-open
+description: Sync OpenAPI/Swagger (OAS) definitions to ReadMe Micro
+inputs:
+  readme-micro:
+    description: Command to pass into rdme
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Set up readme-micro
+      run: npm install --silent --no-save && npm run build --silent
+      shell: bash
+      working-directory: ${{ github.action_path }}
+    - name: Execute rdme command
+      run: ${{ github.action_path }}/index.js ${{ inputs.readme-micro }}
+      shell: bash
