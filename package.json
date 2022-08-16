@@ -1,0 +1,16 @@
+{
+  "name": "readme-micro",
+  "version": "0.0.1",
+  "description": "A GitHub action for uploading OAS files to ReadMe Micro",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.27.2",
+    "command-line-args": "^5.2.1",
+    "dotenv": "^16.0.1"
+  }
+}
