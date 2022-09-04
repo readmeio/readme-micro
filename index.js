@@ -3,6 +3,8 @@
 const fs = require("fs");
 const path = require("path");
 
+const github = require('@actions/github');
+
 require("dotenv").config({ path: path.join(__dirname, ".env") });
 
 const axios = require("axios");
@@ -25,6 +27,8 @@ const axios = require("axios");
   const specs = {};
   let spec;
 
+  console.log(github);
+
   src.forEach((fileName) => {
     const file = path.join(process.cwd(), fileName);
     if (fs.existsSync(file)) {
@@ -34,6 +38,9 @@ const axios = require("axios");
         // just support one for now
         fileName,
         oas,
+
+        // https://docs.github.com/en/actions/learn-github-actions/environment-variables
+        branch: process.env.GITHUB_REF_NAME,
         hash: process.env.GITHUB_SHA,
       };
     }
