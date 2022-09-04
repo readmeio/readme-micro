@@ -25,13 +25,22 @@ const axios = require("axios");
   const src = ["swagger.json", "swagger.yaml"];
 
   const specs = {};
-  let spec;
+
+  let out = {
+    markdown: undefined,
+    spec: undefined,
+  };
+
+  const markdown = path.join(process.cwd(), `micro.md`);
+  if (fs.existsSync(markdown)) {
+    out.markdown = fs.readFileSync(markdown, "utf8");
+  }
 
   src.forEach((fileName) => {
     const file = path.join(process.cwd(), fileName);
     if (fs.existsSync(file)) {
       const oas = fs.readFileSync(file, "utf8");
-      spec = {
+      out.spec = {
         // just support one for now
         fileName,
         oas,
@@ -90,7 +99,7 @@ const axios = require("axios");
   const base = process.env.BASE_URL || "https://micro.readme.build";
 
   axios
-    .post(`${base}/api/uploadSpec`, spec, {
+    .post(`${base}/api/uploadSpec`, out, {
       headers: { "X-API-KEY": options.key },
     })
     .then((response) => {
