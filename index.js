@@ -39,6 +39,7 @@ const axios = require("axios");
         ref: github.ref,
         sha: github.sha,
         actor: github.actor,
+        runId: github.runId,
         payload: github.playload,
       };
     }
