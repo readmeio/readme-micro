@@ -28,7 +28,7 @@ const axios = require("axios");
 
   let out = {
     markdown: undefined, // micro.md file
-    spec: undefined, // the spec {filename, oas}
+    oas: undefined, // the spec {filename, oas}
 
     ref: github.ref,
     sha: github.sha,
@@ -46,7 +46,7 @@ const axios = require("axios");
     const file = path.join(process.cwd(), fileName);
     if (fs.existsSync(file)) {
       const oas = fs.readFileSync(file, "utf8");
-      out.spec = {
+      out.oas = {
         // just support one for now
         fileName,
         oas,
