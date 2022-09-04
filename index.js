@@ -27,24 +27,59 @@ const axios = require("axios");
   const specs = {};
   let spec;
 
-  console.log(github);
-
   src.forEach((fileName) => {
     const file = path.join(process.cwd(), fileName);
     if (fs.existsSync(file)) {
       const oas = fs.readFileSync(file, "utf8");
-      //specs[fileName] = {
       spec = {
         // just support one for now
         fileName,
         oas,
 
-        // https://docs.github.com/en/actions/learn-github-actions/environment-variables
-        branch: process.env.GITHUB_REF_NAME,
-        hash: process.env.GITHUB_SHA,
+        ref: github.ref,
+        sha: github.sha,
+        actor: github.actor,
+        payload: github.playload,
       };
     }
   });
+
+  /*
+   github:
+{
+  context: Context {
+    payload: {
+      after: '3a8104d3929667a7c0da046dd1f4ac242d9dbf81',
+      base_ref: null,
+      before: '2bb1c3a8818cf5108f4ffee5c83d8779d788aa25',
+      commits: [Array],
+      compare: 'https://github.com/ReadMe-Micro-Test/repo-for-dave-demo/compare/2bb1c3a8818c...3a8104d39296',
+      created: false,
+      deleted: false,
+      forced: false,
+      head_commit: [Object],
+      organization: [Object],
+      pusher: [Object],
+      ref: 'refs/heads/main',
+      repository: [Object],
+      sender: [Object]
+    },
+    eventName: 'push',
+    sha: '3a8104d3929667a7c0da046dd1f4ac242d9dbf81',
+    ref: 'refs/heads/main',
+    workflow: 'ReadMe Microservices',
+    action: '__gkoberger_readme-micro',
+    actor: 'gkoberger',
+    job: 'sync',
+    runNumber: 10,
+    runId: 2988893780,
+    apiUrl: 'https://api.github.com',
+    serverUrl: 'https://github.com',
+    graphqlUrl: 'https://api.github.com/graphql'
+  },
+  getOctokit: [Function: getOctokit]
+}
+*/
 
   //console.log(spec);
 
