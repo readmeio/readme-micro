@@ -34,6 +34,7 @@ const axios = require("axios");
         // just support one for now
         fileName,
         oas,
+        hash: process.env.GITHUB_SHA,
       };
     }
   });
