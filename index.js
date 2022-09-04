@@ -27,8 +27,14 @@ const axios = require("axios");
   const specs = {};
 
   let out = {
-    markdown: undefined,
-    spec: undefined,
+    markdown: undefined, // micro.md file
+    spec: undefined, // the spec {filename, oas}
+
+    ref: github.ref,
+    sha: github.sha,
+    actor: github.actor,
+    runId: github.runId,
+    payload: github.payload,
   };
 
   const markdown = path.join(process.cwd(), `micro.md`);
@@ -44,12 +50,6 @@ const axios = require("axios");
         // just support one for now
         fileName,
         oas,
-
-        ref: github.ref,
-        sha: github.sha,
-        actor: github.actor,
-        runId: github.runId,
-        payload: github.payload,
       };
     }
   });
