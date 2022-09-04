@@ -3,7 +3,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const github = require('@actions/github');
+const github = require('@actions/github').context;
 
 require("dotenv").config({ path: path.join(__dirname, ".env") });
 
@@ -40,7 +40,7 @@ const axios = require("axios");
         sha: github.sha,
         actor: github.actor,
         runId: github.runId,
-        payload: github.playload,
+        payload: github.payload,
       };
     }
   });
