@@ -24,11 +24,9 @@ const axios = require("axios");
 
   const src = ["swagger.json", "swagger.yaml"];
 
-  const specs = {};
-
   let out = {
     markdown: undefined, // micro.md file
-    oas: undefined, // the spec {filename, oas}
+    specs: [], // the specs {filename, oas}
 
     ref: github.ref,
     sha: github.sha,
@@ -46,11 +44,10 @@ const axios = require("axios");
     const file = path.join(process.cwd(), fileName);
     if (fs.existsSync(file)) {
       const oas = fs.readFileSync(file, "utf8");
-      out.oas = {
-        // just support one for now
+      out.specs.push({
         fileName,
         oas,
-      };
+      });
     }
   });
 
