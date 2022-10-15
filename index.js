@@ -26,6 +26,11 @@ const axios = require("axios");
 
   let out = {
     markdown: undefined, // micro.md file
+
+    // For legacy reasons, we support 1 in oas
+    // To make supporting multiple easier eventuall,
+    // we also save them to `specs`.
+    oas: undefined,
     specs: [], // the specs {filename, oas}
 
     ref: github.ref,
@@ -50,6 +55,13 @@ const axios = require("axios");
       });
     }
   });
+
+  // This should go away when we support multiple
+  if (out.specs.length) {
+    out.oas = out.specs[0];
+  }
+
+
 
   /*
    github:
