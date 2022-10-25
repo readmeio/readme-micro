@@ -25,7 +25,9 @@ function filterOas(files) {
   const oas = files.filter((fn) => {
     if (fn.match(/.json$/)) {
       try {
+        console.log('loading file', __dirname, path.join(__dirname, fn));
         const j = require(path.join(__dirname, fn));
+        console.log('loaded');
         if (j.openapi || j.swagger) {
           return true;
         }
