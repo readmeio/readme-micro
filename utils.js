@@ -9,12 +9,9 @@ module.exports = {
     }
 
     let out = [];
-    console.log('globs', globs);
     globs.forEach(g => {
       // Concat them and filter dupes
-      console.log('glob files', glob.sync(g));
       const list = filterOas(glob.sync(g));
-      console.log('glob filtered', list);
       out = out.concat(list.filter((item) => out.indexOf(item) < 0));
     });
     return out;
@@ -23,14 +20,9 @@ module.exports = {
 
 function filterOas(files) {
   const oas = files.filter((fn) => {
-    console.log(1);
     if (fn.match(/.json$/)) {
-    console.log(2);
       try {
-    console.log(3);
-        console.log('loading file', process.cwd(), path.join(process.cwd(), fn));
         const j = require(path.join(process.cwd(), fn));
-        console.log('loaded', j);
         if (j.openapi || j.swagger) {
           return true;
         }
@@ -41,7 +33,6 @@ function filterOas(files) {
       const match = j.match(/\s?(openapi|swagger):\s([\s".0-9]+){3,}/);
       if (match) return true;
     }
-    console.log(4);
     return false;
   });
   return oas;

@@ -22,11 +22,7 @@ const axios = require("axios");
   */
   ]);
 
-  // We're ignoring src for now, and using our own!
-
-  console.log("glob before", options.src);
   const src = utils.listOas(options.src);
-  console.log("Found files", options.src, src);
 
   let out = {
     markdown: undefined, // micro.md file
