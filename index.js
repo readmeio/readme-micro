@@ -5,6 +5,8 @@ const path = require("path");
 
 const github = require('@actions/github').context;
 
+const utils = require('./utils')
+
 require("dotenv").config({ path: path.join(__dirname, ".env") });
 
 const axios = require("axios");
@@ -22,7 +24,7 @@ const axios = require("axios");
 
   // We're ignoring src for now, and using our own!
 
-  const src = ["swagger.json", "swagger.yaml"];
+  const src = utils.listOas(options.src);
 
   let out = {
     markdown: undefined, // micro.md file
