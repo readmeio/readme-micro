@@ -13,6 +13,7 @@
     "axios": "^0.27.2",
     "command-line-args": "^5.2.1",
     "dotenv": "^16.0.1",
-    "glob": "^8.0.3"
+    "glob": "^8.0.3",
+    "swagger-inline": "^6.1.0"
   }
 }

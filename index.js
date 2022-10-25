@@ -7,6 +7,8 @@ const github = require('@actions/github').context;
 
 const utils = require('./utils')
 
+const swaggerInline = require('swagger-inline');
+
 require("dotenv").config({ path: path.join(__dirname, ".env") });
 
 const axios = require("axios");
@@ -48,7 +50,16 @@ const axios = require("axios");
   src.forEach((fileName) => {
     const file = path.join(process.cwd(), fileName);
     if (fs.existsSync(file)) {
-      const oas = fs.readFileSync(file, "utf8");
+      //const oas = fs.readFileSync(file, "utf8");
+
+      /* TODO: I would love Swagger Inline to eventually
+       * use a glob from the OAS file itself, so hopefully
+       * eventually we can do that!*/
+
+      const oas = await swaggerInline(['**/*'], {
+        base: file,
+      });
+
       out.specs.push({
         fileName,
         oas,
