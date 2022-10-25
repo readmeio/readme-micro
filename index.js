@@ -26,6 +26,8 @@ const axios = require("axios");
 
   const src = utils.listOas(options.src);
 
+  console.log("Found files", options.src, src);
+
   let out = {
     markdown: undefined, // micro.md file
 
