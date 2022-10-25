@@ -9,9 +9,12 @@ module.exports = {
     }
 
     let out = [];
+    console.log('globs', globs);
     globs.forEach(g => {
       // Concat them and filter dupes
+      console.log('glob files', glob.sync(g));
       const list = filterOas(glob.sync(g));
+      console.log('glob filtered', list);
       out = out.concat(list.filter((item) => out.indexOf(item) < 0));
     });
     return out;
