@@ -3,17 +3,17 @@
 const fs = require("fs");
 const path = require("path");
 
-const github = require('@actions/github').context;
+const github = require("@actions/github").context;
 
-const utils = require('./utils')
+const utils = require("./utils");
 
-const swaggerInline = require('swagger-inline');
+const swaggerInline = require("swagger-inline");
 
 require("dotenv").config({ path: path.join(__dirname, ".env") });
 
 const axios = require("axios");
 
-(() => {
+(async () => {
   const commandLineArgs = require("command-line-args");
   const options = commandLineArgs([
     { name: "src", type: String, multiple: true, defaultOption: true },
@@ -47,7 +47,8 @@ const axios = require("axios");
     out.markdown = fs.readFileSync(markdown, "utf8");
   }
 
-  src.forEach((fileName) => {
+  for (var i = 0; i < src.length; i++) {
+    var fileName = src[i];
     const file = path.join(process.cwd(), fileName);
     if (fs.existsSync(file)) {
       //const oas = fs.readFileSync(file, "utf8");
@@ -56,7 +57,7 @@ const axios = require("axios");
        * use a glob from the OAS file itself, so hopefully
        * eventually we can do that!*/
 
-      const oas = await swaggerInline(['**/*'], {
+      const oas = await swaggerInline(["**/*"], {
         base: file,
       });
 
@@ -65,14 +66,12 @@ const axios = require("axios");
         oas,
       });
     }
-  });
+  }
 
   // This should go away when we support multiple
   if (out.specs.length) {
     out.oas = out.specs[0];
   }
-
-
 
   /*
    github:
