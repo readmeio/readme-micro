@@ -18,12 +18,9 @@ const axios = require("axios");
   const options = commandLineArgs([
     { name: "src", type: String, multiple: true, defaultOption: true },
     { name: "key", alias: "k", type: String },
-    /*
-  { name: 'src', type: String, multiple: true, defaultOption: true },
-  { name: 'timeout', alias: 't', type: Number }
-  */
   ]);
 
+  console.log('options', options);
   const src = utils.listOas(options.src);
 
   let out = {
@@ -51,11 +48,15 @@ const axios = require("axios");
     var fileName = src[i];
     const file = path.join(process.cwd(), fileName);
     if (fs.existsSync(file)) {
-      //const oas = fs.readFileSync(file, "utf8");
-
       /* TODO: I would love Swagger Inline to eventually
        * use a glob from the OAS file itself, so hopefully
-       * eventually we can do that!*/
+       * eventually we can do that!
+       *
+       * Like this:
+       *
+       *   path: '**\/*.js'
+       *
+       * */
 
       const oas = await swaggerInline(["**/*"], {
         base: file,
