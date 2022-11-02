@@ -4,6 +4,10 @@ const glob = require("glob");
 
 module.exports = {
   listOas: function (globs) {
+    if (fs.existsSync(path.join(process.cwd(), 'api.config.json')) && fs.existsSync(path.join(process.cwd(), 'endpoints'))) {
+      return ['api.config.json'];
+    }
+
     if (!globs || !globs.length) {
       globs = [ '**/*.{yaml,yml,json}' ];
     }
