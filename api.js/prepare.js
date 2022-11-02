@@ -104,7 +104,7 @@ export default async (workingDir) => {
           path.push(`.${method}`);
         }
         getUrlParams(handler).forEach((p) => {
-          path.push(`/:${p}`);
+          path.push(`/{${p}}`);
         });
         return path.join("");
       };
