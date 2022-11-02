@@ -50,7 +50,7 @@ const axios = require("axios");
       let oas;
       if (fileName === "api.config.json") {
         const prepare = await import('./api.js/prepare.js');
-        oas = JSON.stringify((await prepare.default(process.cwd())).oas);
+        oas = JSON.stringify((await prepare.default(process.cwd())).oas, undefined, 2);
       } else {
         /* TODO: I would love Swagger Inline to eventually
          * use a glob from the OAS file itself, so hopefully
