@@ -52,7 +52,7 @@ const axios = require("axios");
       let oas;
       if (fileName === "api.config.json") {
         const prepare = await import('./api.js/prepare.mjs');
-        oas = (await prepare.default(process.cwd())).oas;
+        oas = JSON.stringify((await prepare.default(process.cwd())).oas);
       } else {
         /* TODO: I would love Swagger Inline to eventually
          * use a glob from the OAS file itself, so hopefully
@@ -80,6 +80,8 @@ const axios = require("axios");
   if (out.specs.length) {
     out.oas = out.specs[0];
   }
+
+        console.log(out);
 
   /*
    github:
