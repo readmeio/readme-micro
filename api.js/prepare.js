@@ -125,6 +125,7 @@ export default async (workingDir) => {
         summary: endpoint.title,
         description: endpoint.description,
         parameters: [],
+        tags: [ endpoint.resource ],
         responses: {
           '200': {
             description: 'OK'
