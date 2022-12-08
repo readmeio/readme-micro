@@ -4,6 +4,7 @@ const fs = require("fs");
 const path = require("path");
 
 const github = require("@actions/github").context;
+const core = require("@actions/core");
 
 const utils = require("./utils");
 
@@ -133,5 +134,6 @@ const axios = require("axios");
     })
     .catch((error) => {
       console.log(error);
+      core.setFailed(error.message);
     });
 })();
