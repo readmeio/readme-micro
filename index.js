@@ -14,12 +14,15 @@ require("dotenv").config({ path: path.join(__dirname, ".env") });
 
 const axios = require("axios");
 
-(async () => {
+async function main(opts) {
   const commandLineArgs = require("command-line-args");
   const options = commandLineArgs([
     { name: "src", type: String, multiple: true, defaultOption: true },
     { name: "key", alias: "k", type: String },
-  ]);
+  ], { partial: true }); // this prevents the script from throwing during unit tests
+
+  // This allows us to override the options during unit tests
+  Object.assign(options, opts);
 
   const src = utils.listOas(options.src);
 
@@ -72,7 +75,7 @@ const axios = require("axios");
 
       out.specs.push({
         fileName,
-        oas,
+        oas: JSON.parse(oas),
       });
     }
   }
@@ -80,11 +83,13 @@ const axios = require("axios");
   // This should go away when we support multiple
   if (out.specs.length) {
     out.oas = out.specs[0];
+    // Stubbing this out for now for easier testing.
+    out.specs = undefined;
   }
 
   const base = process.env.BASE_URL || "https://micro.readme.build";
 
-  axios
+  return axios
     .post(`${base}/api/uploadSpec`, out, {
       headers: { "X-API-KEY": options.key },
     })
@@ -95,5 +100,12 @@ const axios = require("axios");
     .catch((error) => {
       console.log(error);
       core.setFailed(error.message);
+      throw error;
     });
-})();
+}
+
+module.exports = main;
+
+if (require.main === module) {
+  main()
+}
