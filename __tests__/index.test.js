@@ -7,14 +7,13 @@ const action = require('../');
 
 it('should upload specs to micro', async () => {
   const mock = nock('https://micro.readme.build')
-    // Removing some properties on the body because
-    // these are undefined on localhost, but populated
-    // when running these tests in GitHub CI
+    // We only want to test the oas property on the
+    // body because there are a bunch of other
+    // things that are undefined on localhost,
+    // but populated when running these tests in GitHub CI
     .filteringRequestBody(body => {
       const _body = JSON.parse(body);
-      delete _body.payload;
-      delete _body.runId;
-      return JSON.stringify(_body);
+      return JSON.stringify({ oas: _body.oas });
     })
     .post('/api/uploadSpec', JSON.stringify({
       oas: {
