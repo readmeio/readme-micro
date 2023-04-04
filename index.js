@@ -94,8 +94,7 @@ async function main(opts) {
       headers: { "X-API-KEY": options.key },
     })
     .then((response) => {
-      console.log(response.data.url);
-      console.log(response.data.explanation);
+      console.log('Successfully synced file to ReadMe Micro! 🦉');
     })
     .catch((error) => {
       console.log(error);

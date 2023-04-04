@@ -21,7 +21,7 @@ it('should upload specs to micro', async () => {
         oas: petstore,
       },
     }))
-    .reply(200, JSON.stringify({ url: 'https://example.com', explanation: 'Lorem ipsum' }));
+    .reply(200);
 
   await action({ key: '123456', src: ['__tests__/__fixtures__/petstore.json'] })
   mock.done();
