@@ -1,5 +1,5 @@
 const nock = require('nock');
-const petstore = require('./__fixtures__/petstore.json');
+const petstore = require('fs').readFileSync(__dirname + '/__fixtures__/petstore.json', 'utf-8');
 
 nock.disableNetConnect();
 

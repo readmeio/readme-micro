@@ -51,7 +51,7 @@ async function main(opts) {
     var fileName = src[i];
     const file = path.join(process.cwd(), fileName);
     if (fs.existsSync(file)) {
-      let oas;
+      let oas = {};
       if (fileName === "api.config.json") {
         /*
         const prepare = await import('./api.js/prepare.js');
@@ -75,7 +75,7 @@ async function main(opts) {
 
       out.specs.push({
         fileName,
-        oas: JSON.parse(oas),
+        oas,
       });
     }
   }
