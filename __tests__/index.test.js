@@ -19,44 +19,53 @@ function filteringRequestBody(body) {
 it('should upload specs to micro', async () => {
   const mock = nock('https://micro.readme.build')
     .filteringRequestBody(filteringRequestBody)
-    .post('/api/uploadSpec', JSON.stringify({
-      oas: {
-        fileName: "__tests__/__fixtures__/petstore.json",
-        oas: JSON.stringify(petstore),
-      },
-    }))
+    .post(
+      '/api/uploadSpec',
+      JSON.stringify({
+        oas: {
+          fileName: '__tests__/__fixtures__/petstore.json',
+          oas: JSON.stringify(petstore),
+        },
+      })
+    )
     .reply(200);
 
-  await action({ key: '123456', src: ['__tests__/__fixtures__/petstore.json'] })
+  await action({ key: '123456', src: ['__tests__/__fixtures__/petstore.json'] });
   mock.done();
 });
 
 it('should work for yaml specs', async () => {
   const mock = nock('https://micro.readme.build')
     .filteringRequestBody(filteringRequestBody)
-    .post('/api/uploadSpec', JSON.stringify({
-      oas: {
-        fileName: "__tests__/__fixtures__/petstore.yaml",
-        oas: JSON.stringify(petstore),
-      },
-    }))
+    .post(
+      '/api/uploadSpec',
+      JSON.stringify({
+        oas: {
+          fileName: '__tests__/__fixtures__/petstore.yaml',
+          oas: JSON.stringify(petstore),
+        },
+      })
+    )
     .reply(200);
 
-  await action({ key: '123456', src: ['__tests__/__fixtures__/petstore.yaml'] })
+  await action({ key: '123456', src: ['__tests__/__fixtures__/petstore.yaml'] });
   mock.done();
 });
 
-it("should bundle specs with file references", async () => {
+it('should bundle specs with file references', async () => {
   const mock = nock('https://micro.readme.build')
     .filteringRequestBody(filteringRequestBody)
-    .post('/api/uploadSpec', JSON.stringify({
-      oas: {
-        fileName: "__tests__/__fixtures__/openapi-file-resolver.json",
-        oas: JSON.stringify(openapiBundled),
-      },
-    }))
+    .post(
+      '/api/uploadSpec',
+      JSON.stringify({
+        oas: {
+          fileName: '__tests__/__fixtures__/openapi-file-resolver.json',
+          oas: JSON.stringify(openapiBundled),
+        },
+      })
+    )
     .reply(200, JSON.stringify({ url: 'https://example.com', explanation: 'Lorem ipsum' }));
 
-  await action({ key: '123456', src: ['__tests__/__fixtures__/openapi-file-resolver.json'] })
+  await action({ key: '123456', src: ['__tests__/__fixtures__/openapi-file-resolver.json'] });
   mock.done();
 });
