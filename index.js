@@ -2,21 +2,19 @@
 
 const fs = require('fs');
 const path = require('path');
-const OASNormalize = require('oas-normalize');
 
-const github = require('@actions/github').context;
 const core = require('@actions/core');
+const github = require('@actions/github').context;
+const axios = require('axios');
+const commandLineArgs = require('command-line-args');
+const { default: OASNormalize } = require('oas-normalize');
+const swaggerInline = require('swagger-inline');
 
 const utils = require('./utils');
 
-const swaggerInline = require('swagger-inline');
-
 require('dotenv').config({ path: path.join(__dirname, '.env') });
 
-const axios = require('axios');
-
 async function main(opts) {
-  const commandLineArgs = require('command-line-args');
   const options = commandLineArgs(
     [
       { name: 'src', type: String, multiple: true, defaultOption: true },
@@ -30,7 +28,7 @@ async function main(opts) {
 
   const src = utils.listOas(options.src);
 
-  let out = {
+  const out = {
     markdown: undefined, // micro.md file
 
     // For legacy reasons, we support 1 in oas
@@ -46,13 +44,13 @@ async function main(opts) {
     payload: github.payload,
   };
 
-  const markdown = path.join(process.cwd(), `micro.md`);
+  const markdown = path.join(process.cwd(), 'micro.md');
   if (fs.existsSync(markdown)) {
     out.markdown = fs.readFileSync(markdown, 'utf8');
   }
 
-  for (var i = 0; i < src.length; i++) {
-    var fileName = src[i];
+  for (let i = 0; i < src.length; i += 1) {
+    const fileName = src[i];
     const file = path.join(process.cwd(), fileName);
     if (fs.existsSync(file)) {
       let oas = {};
@@ -72,15 +70,17 @@ async function main(opts) {
          *
          * */
 
+        // eslint-disable-next-line no-await-in-loop
         oas = await swaggerInline(['**/*'], {
           base: file,
         });
       }
 
-      const normalized = new OASNormalize.default(oas);
+      const normalized = new OASNormalize(oas);
 
       out.specs.push({
         fileName,
+        // eslint-disable-next-line no-await-in-loop
         oas: JSON.stringify(await normalized.bundle()),
       });
     }
@@ -99,7 +99,7 @@ async function main(opts) {
     .post(`${base}/api/uploadSpec`, out, {
       headers: { 'X-API-KEY': options.key },
     })
-    .then(response => {
+    .then(() => {
       console.log('Successfully synced file to ReadMe Micro! 🦉');
     })
     .catch(error => {

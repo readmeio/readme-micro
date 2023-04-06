@@ -1,10 +1,11 @@
 const nock = require('nock');
-const petstore = require('./__fixtures__/petstore.json');
+
+const action = require('..');
+
 const openapiBundled = require('./__fixtures__/openapi-file-resolver-bundled.json');
+const petstore = require('./__fixtures__/petstore.json');
 
 nock.disableNetConnect();
-
-const action = require('../');
 
 /* We only want to test the oas property on the
  * body because there are a bunch of other
@@ -12,6 +13,7 @@ const action = require('../');
  * but populated when running these tests in GitHub CI
  */
 function filteringRequestBody(body) {
+  // eslint-disable-next-line no-underscore-dangle
   const _body = JSON.parse(body);
   return JSON.stringify({ oas: _body.oas });
 }
