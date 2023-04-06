@@ -1,0 +1,9 @@
+{
+  "components": {
+    "responses": {
+      "validResponse": {
+        "type": "string"
+      }
+    }
+  }
+}

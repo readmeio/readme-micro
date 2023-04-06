@@ -1,0 +1,46 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Basic OAS file",
+    "version": "0.0.1"
+  },
+  "servers": [
+    {
+      "url": "https://httpbin.org/"
+    }
+  ],
+  "paths": {
+    "/post": {
+      "post": {
+        "summary": "POST something!",
+        "operationId": "post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "a": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./__tests__/__fixtures__/responses.json#/components/responses/validResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

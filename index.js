@@ -2,6 +2,7 @@
 
 const fs = require("fs");
 const path = require("path");
+const OASNormalize = require('oas-normalize');
 
 const github = require("@actions/github").context;
 const core = require("@actions/core");
@@ -73,9 +74,11 @@ async function main(opts) {
         });
       }
 
+      const normalized = new OASNormalize.default(oas);
+
       out.specs.push({
         fileName,
-        oas,
+        oas: JSON.stringify(await normalized.bundle()),
       });
     }
   }
