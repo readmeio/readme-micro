@@ -4,7 +4,7 @@
   "description": "A GitHub action for uploading OAS files to ReadMe Micro",
   "main": "index.js",
   "scripts": {
-    "pretest": "npm run lint",
+    "pretest": "npm run lint && npm run prettier",
     "lint": "eslint .",
     "prettier": "prettier --check \"./**/**.{js,md,yaml,json}\"",
     "prettier:fix": "prettier --list-different --write \"./**/**.{js,md,yaml,json}\"",
