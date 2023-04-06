@@ -31,7 +31,20 @@ it('should upload specs to micro', async () => {
   mock.done();
 });
 
-it.todo('should work for yaml specs');
+it('should work for yaml specs', async () => {
+  const mock = nock('https://micro.readme.build')
+    .filteringRequestBody(filteringRequestBody)
+    .post('/api/uploadSpec', JSON.stringify({
+      oas: {
+        fileName: "__tests__/__fixtures__/petstore.yaml",
+        oas: JSON.stringify(petstore),
+      },
+    }))
+    .reply(200);
+
+  await action({ key: '123456', src: ['__tests__/__fixtures__/petstore.yaml'] })
+  mock.done();
+});
 
 it("should bundle specs with file references", async () => {
   const mock = nock('https://micro.readme.build')

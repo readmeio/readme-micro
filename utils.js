@@ -33,10 +33,10 @@ function filterOas(files) {
       } catch (e) {}
     }
     if (fn.match(/.(yaml|yml)/)) {
-      console.log('checking', path.join(process.cwd(), fn));
+      // console.log('checking', path.join(process.cwd(), fn));
       const j = fs.readFileSync(path.join(process.cwd(), fn), "utf8");
       const match = j.match(/\s?(openapi|swagger):\s([\s".0-9]+){3,}/);
-      console.log('match?', match);
+      // console.log('match?', match);
 
       if (match) return true;
     }
