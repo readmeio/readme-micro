@@ -18,7 +18,7 @@ function filteringRequestBody(body) {
   return JSON.stringify({ oas: _body.oas });
 }
 
-it('should upload specs to micro', async () => {
+test('should upload specs to micro', async () => {
   const mock = nock('https://micro.readme.build')
     .filteringRequestBody(filteringRequestBody)
     .post(
@@ -36,7 +36,7 @@ it('should upload specs to micro', async () => {
   mock.done();
 });
 
-it('should work for yaml specs', async () => {
+test('should work for yaml specs', async () => {
   const mock = nock('https://micro.readme.build')
     .filteringRequestBody(filteringRequestBody)
     .post(
@@ -54,7 +54,7 @@ it('should work for yaml specs', async () => {
   mock.done();
 });
 
-it('should work for single quoted yaml specs', async () => {
+test('should work for single quoted yaml specs', async () => {
   const mock = nock('https://micro.readme.build')
     .filteringRequestBody(filteringRequestBody)
     .post(
@@ -72,7 +72,7 @@ it('should work for single quoted yaml specs', async () => {
   mock.done();
 });
 
-it('should bundle specs with file references', async () => {
+test('should bundle specs with file references', async () => {
   const mock = nock('https://micro.readme.build')
     .filteringRequestBody(filteringRequestBody)
     .post(
@@ -87,5 +87,15 @@ it('should bundle specs with file references', async () => {
     .reply(200, JSON.stringify({ url: 'https://example.com', explanation: 'Lorem ipsum' }));
 
   await action({ key: '123456', src: ['__tests__/__fixtures__/openapi-file-resolver.json'] });
+  mock.done();
+});
+
+test('should work with no files being present', async () => {
+  const mock = nock('https://micro.readme.build')
+    .filteringRequestBody(filteringRequestBody)
+    .post('/api/uploadSpec', JSON.stringify({}))
+    .reply(200);
+
+  await action({ key: '123456', src: ['__tests__/__fixtures__/non-existent-file.json'] });
   mock.done();
 });
