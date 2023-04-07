@@ -55,8 +55,18 @@ it("should bundle specs with file references", async () => {
         oas: JSON.stringify(openapiBundled),
       },
     }))
-    .reply(200, JSON.stringify({ url: 'https://example.com', explanation: 'Lorem ipsum' }));
+    .reply(200);
 
   await action({ key: '123456', src: ['__tests__/__fixtures__/openapi-file-resolver.json'] })
+  mock.done();
+});
+
+it("should work with no files being present", async () => {
+  const mock = nock('https://micro.readme.build')
+    .filteringRequestBody(filteringRequestBody)
+    .post('/api/uploadSpec', JSON.stringify({}))
+    .reply(200);
+
+  await action({ key: '123456', src: ['__tests__/__fixtures__/non-existent-file.json'] })
   mock.done();
 });
