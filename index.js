@@ -1,33 +1,34 @@
 /* We'll make this better eventually, but for now we'll make it quickly! */
 
-const fs = require("fs");
-const path = require("path");
-const OASNormalize = require('oas-normalize');
+const fs = require('fs');
+const path = require('path');
 
-const github = require("@actions/github").context;
-const core = require("@actions/core");
+const core = require('@actions/core');
+const github = require('@actions/github').context;
+const axios = require('axios');
+const commandLineArgs = require('command-line-args');
+const { default: OASNormalize } = require('oas-normalize');
+const swaggerInline = require('swagger-inline');
 
-const utils = require("./utils");
+const utils = require('./utils');
 
-const swaggerInline = require("swagger-inline");
-
-require("dotenv").config({ path: path.join(__dirname, ".env") });
-
-const axios = require("axios");
+require('dotenv').config({ path: path.join(__dirname, '.env') });
 
 async function main(opts) {
-  const commandLineArgs = require("command-line-args");
-  const options = commandLineArgs([
-    { name: "src", type: String, multiple: true, defaultOption: true },
-    { name: "key", alias: "k", type: String },
-  ], { partial: true }); // this prevents the script from throwing during unit tests
+  const options = commandLineArgs(
+    [
+      { name: 'src', type: String, multiple: true, defaultOption: true },
+      { name: 'key', alias: 'k', type: String },
+    ],
+    { partial: true }
+  ); // this prevents the script from throwing during unit tests
 
   // This allows us to override the options during unit tests
   Object.assign(options, opts);
 
   const src = utils.listOas(options.src);
 
-  let out = {
+  const out = {
     markdown: undefined, // micro.md file
 
     // For legacy reasons, we support 1 in oas
@@ -43,17 +44,17 @@ async function main(opts) {
     payload: github.payload,
   };
 
-  const markdown = path.join(process.cwd(), `micro.md`);
+  const markdown = path.join(process.cwd(), 'micro.md');
   if (fs.existsSync(markdown)) {
-    out.markdown = fs.readFileSync(markdown, "utf8");
+    out.markdown = fs.readFileSync(markdown, 'utf8');
   }
 
-  for (var i = 0; i < src.length; i++) {
-    var fileName = src[i];
+  for (let i = 0; i < src.length; i += 1) {
+    const fileName = src[i];
     const file = path.join(process.cwd(), fileName);
     if (fs.existsSync(file)) {
       let oas = {};
-      if (fileName === "api.config.json") {
+      if (fileName === 'api.config.json') {
         /*
         const prepare = await import('./api.js/prepare.js');
         oas = JSON.stringify((await prepare.default(process.cwd())).oas, undefined, 2);
@@ -69,15 +70,17 @@ async function main(opts) {
          *
          * */
 
-        oas = await swaggerInline(["**/*"], {
+        // eslint-disable-next-line no-await-in-loop
+        oas = await swaggerInline(['**/*'], {
           base: file,
         });
       }
 
-      const normalized = new OASNormalize.default(oas);
+      const normalized = new OASNormalize(oas);
 
       out.specs.push({
         fileName,
+        // eslint-disable-next-line no-await-in-loop
         oas: JSON.stringify(await normalized.bundle()),
       });
     }
@@ -90,16 +93,16 @@ async function main(opts) {
     out.specs = undefined;
   }
 
-  const base = process.env.BASE_URL || "https://micro.readme.build";
+  const base = process.env.BASE_URL || 'https://micro.readme.build';
 
   return axios
     .post(`${base}/api/uploadSpec`, out, {
-      headers: { "X-API-KEY": options.key },
+      headers: { 'X-API-KEY': options.key },
     })
-    .then((response) => {
+    .then(() => {
       console.log('Successfully synced file to ReadMe Micro! 🦉');
     })
-    .catch((error) => {
+    .catch(error => {
       console.log(error);
       core.setFailed(error.message);
       throw error;

@@ -1,0 +1,16 @@
+{
+  "extends": ["@readme/eslint-config"],
+  "rules": {
+    "import/order": [
+      "error",
+      {
+        "alphabetize": {
+          "order": "asc",
+          "caseInsensitive": true
+        },
+        "newlines-between": "always",
+        "warnOnUnassignedImports": true
+      }
+    ]
+  }
+}
