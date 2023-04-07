@@ -1,3 +1,12 @@
 {
   "extends": ["@readme/eslint-config/testing"],
+  "rules": {
+    "jest/expect-expect": [
+      "error",
+      {
+        "assertFunctionNames": ["expect", "mock.done"],
+        "additionalTestBlockFunctions": []
+      }
+    ]
+  }
 }
