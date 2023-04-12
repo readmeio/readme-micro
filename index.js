@@ -16,6 +16,7 @@ require('dotenv').config({ path: path.join(__dirname, '.env') });
 
 function log(...args) {
   if (process.env.NODE_ENV === 'test') return null;
+  // eslint-disable-next-line no-console
   return console.log(...args);
 }
 
@@ -95,6 +96,7 @@ async function main(opts) {
       log('Successfully synced file to ReadMe Micro! 🦉');
     })
     .catch(error => {
+      // eslint-disable-next-line no-console
       console.log(error);
       core.setFailed(error.message);
       throw error;
