@@ -15,7 +15,9 @@ nock.disableNetConnect();
 function filteringRequestBody(body) {
   // eslint-disable-next-line no-underscore-dangle
   const _body = JSON.parse(body);
-  return JSON.stringify({ oas: _body.oas });
+  delete _body.payload;
+  delete _body.runId;
+  return JSON.stringify(_body);
 }
 
 test('should upload specs to micro', async () => {
@@ -24,10 +26,12 @@ test('should upload specs to micro', async () => {
     .post(
       '/api/uploadSpec',
       JSON.stringify({
-        oas: {
-          fileName: '__tests__/__fixtures__/petstore.json',
-          oas: JSON.stringify(petstore),
-        },
+        specs: [
+          {
+            fileName: '__tests__/__fixtures__/petstore.json',
+            oas: JSON.stringify(petstore),
+          },
+        ],
       })
     )
     .reply(200);
@@ -42,10 +46,12 @@ test('should work for yaml specs', async () => {
     .post(
       '/api/uploadSpec',
       JSON.stringify({
-        oas: {
-          fileName: '__tests__/__fixtures__/petstore.yaml',
-          oas: JSON.stringify(petstore),
-        },
+        specs: [
+          {
+            fileName: '__tests__/__fixtures__/petstore.yaml',
+            oas: JSON.stringify(petstore),
+          },
+        ],
       })
     )
     .reply(200);
@@ -60,10 +66,12 @@ test('should work for single quoted yaml specs', async () => {
     .post(
       '/api/uploadSpec',
       JSON.stringify({
-        oas: {
-          fileName: '__tests__/__fixtures__/petstore-single-quotes.yaml',
-          oas: JSON.stringify(petstore),
-        },
+        specs: [
+          {
+            fileName: '__tests__/__fixtures__/petstore-single-quotes.yaml',
+            oas: JSON.stringify(petstore),
+          },
+        ],
       })
     )
     .reply(200);
@@ -78,10 +86,12 @@ test('should bundle specs with file references', async () => {
     .post(
       '/api/uploadSpec',
       JSON.stringify({
-        oas: {
-          fileName: '__tests__/__fixtures__/openapi-file-resolver.json',
-          oas: JSON.stringify(openapiBundled),
-        },
+        specs: [
+          {
+            fileName: '__tests__/__fixtures__/openapi-file-resolver.json',
+            oas: JSON.stringify(openapiBundled),
+          },
+        ],
       })
     )
     .reply(200, JSON.stringify({ url: 'https://example.com', explanation: 'Lorem ipsum' }));
@@ -93,7 +103,7 @@ test('should bundle specs with file references', async () => {
 test('should work with no files being present', async () => {
   const mock = nock('https://micro.readme.build')
     .filteringRequestBody(filteringRequestBody)
-    .post('/api/uploadSpec', JSON.stringify({}))
+    .post('/api/uploadSpec', JSON.stringify({ specs: [] }))
     .reply(200);
 
   await action({ key: '123456', src: ['__tests__/__fixtures__/non-existent-file.json'] });

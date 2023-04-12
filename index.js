@@ -86,13 +86,6 @@ async function main(opts) {
     }
   }
 
-  // This should go away when we support multiple
-  if (out.specs.length) {
-    out.oas = out.specs[0];
-    // Stubbing this out for now for easier testing.
-    out.specs = undefined;
-  }
-
   const base = process.env.BASE_URL || 'https://micro.readme.build';
 
   return axios
