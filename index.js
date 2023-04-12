@@ -14,6 +14,11 @@ const utils = require('./utils');
 
 require('dotenv').config({ path: path.join(__dirname, '.env') });
 
+function log(...args) {
+  if (process.env.NODE_ENV === 'test') return null;
+  return console.log(...args);
+}
+
 async function main(opts) {
   const options = commandLineArgs(
     [
@@ -30,13 +35,7 @@ async function main(opts) {
 
   const out = {
     markdown: undefined, // micro.md file
-
-    // For legacy reasons, we support 1 in oas
-    // To make supporting multiple easier eventuall,
-    // we also save them to `specs`.
-    oas: undefined,
     specs: [], // the specs {filename, oas}
-
     ref: github.ref,
     sha: github.sha,
     actor: github.actor,
@@ -93,7 +92,7 @@ async function main(opts) {
       headers: { 'X-API-KEY': options.key },
     })
     .then(() => {
-      console.log('Successfully synced file to ReadMe Micro! 🦉');
+      log('Successfully synced file to ReadMe Micro! 🦉');
     })
     .catch(error => {
       console.log(error);
