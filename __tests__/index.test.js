@@ -15,9 +15,7 @@ nock.disableNetConnect();
 function filteringRequestBody(body) {
   // eslint-disable-next-line no-underscore-dangle
   const _body = JSON.parse(body);
-  delete _body.payload;
-  delete _body.runId;
-  return JSON.stringify(_body);
+  return JSON.stringify({ specs: _body.specs });
 }
 
 test('should upload specs to micro', async () => {
