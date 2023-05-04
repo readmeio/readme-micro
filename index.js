@@ -4,12 +4,12 @@ const fs = require('fs');
 const path = require('path');
 
 const core = require('@actions/core');
-const github = require('@actions/github').context;
 const axios = require('axios');
 const commandLineArgs = require('command-line-args');
 const { default: OASNormalize } = require('oas-normalize');
 const swaggerInline = require('swagger-inline');
 
+const getContext = require('./lib/context');
 const utils = require('./utils');
 
 require('dotenv').config({ path: path.join(__dirname, '.env') });
@@ -34,14 +34,12 @@ async function main(opts) {
 
   const src = utils.listOas(options.src);
 
+  const context = await getContext();
+
   const out = {
     markdown: undefined, // micro.md file
     specs: [], // the specs {filename, oas}
-    ref: github.ref,
-    sha: github.sha,
-    actor: github.actor,
-    runId: github.runId,
-    payload: github.payload,
+    ...context,
   };
 
   const markdown = path.join(process.cwd(), 'micro.md');
@@ -98,6 +96,7 @@ async function main(opts) {
     .catch(error => {
       // eslint-disable-next-line no-console
       console.log(error);
+      // TODO not sure what this will do on bitbucket pipelines?
       core.setFailed(error.message);
       throw error;
     });
