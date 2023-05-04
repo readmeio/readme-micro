@@ -1,0 +1,13 @@
+{
+  "repository": {
+    "name": "repo"
+  },
+  "commits": [
+    {
+      "message": "Commit message",
+      "author": {
+        "username": "owlbert"
+      }
+    }
+  ]
+}
