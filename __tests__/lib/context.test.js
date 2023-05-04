@@ -1,5 +1,9 @@
 const { execSync } = require('child_process');
 
+const nock = require('nock');
+
+nock.disableNetConnect();
+
 const githubPayload = require('../__fixtures__/github-payload.json');
 
 describe('getContext()', () => {
@@ -29,7 +33,7 @@ describe('getContext()', () => {
       // eslint-disable-next-line global-require
       const getContext = require('../../lib/context');
 
-      expect(getContext()).toMatchObject({
+      return expect(getContext()).resolves.toMatchObject({
         ref: process.env.GITHUB_REF,
         sha: process.env.GITHUB_SHA,
         actor: process.env.GITHUB_ACTOR,
@@ -40,20 +44,24 @@ describe('getContext()', () => {
   });
 
   describe('bitbucket', () => {
-    it('should pull `context` from environment variables', () => {
+    it('should pull `context` from environment variables', async () => {
       // https://support.atlassian.com/bitbucket-cloud/docs/variables-and-secrets/
       process.env.BITBUCKET_COMMIT = 'e32041305b8573674b6f85068ee95591029f58a0';
-      process.env.BITBUCKET_STEP_TRIGGERER_UUID = 'domharrington';
+      process.env.BITBUCKET_STEP_TRIGGERER_UUID = '{636fcf11-a096-4b88-99ed-ce185e001fdb}';
       process.env.BITBUCKET_BUILD_NUMBER = '1234';
       process.env.BITBUCKET_REPO_SLUG = 'repo-name';
 
       // eslint-disable-next-line global-require
       const getContext = require('../../lib/context');
 
-      expect(getContext()).toMatchObject({
+      const mock = nock('https://api.bitbucket.org')
+        .get(`/2.0/users/${encodeURIComponent(process.env.BITBUCKET_STEP_TRIGGERER_UUID)}`)
+        .reply(200, { display_name: 'Dom H' });
+
+      await expect(getContext()).resolves.toMatchObject({
         ref: execSync('git rev-parse --abbrev-ref HEAD', { encoding: 'utf-8' }).trim(),
         sha: process.env.BITBUCKET_COMMIT,
-        actor: process.env.BITBUCKET_STEP_TRIGGERER_UUID,
+        actor: 'Dom H',
         runId: parseInt(process.env.BITBUCKET_BUILD_NUMBER, 10),
         payload: {
           repository: {
@@ -63,12 +71,45 @@ describe('getContext()', () => {
             {
               message: 'test: attempt to fix tests in CI env',
               author: {
-                username: process.env.BITBUCKET_STEP_TRIGGERER_UUID,
+                username: 'Dom H',
               },
             },
           ],
         },
       });
+
+      mock.done();
+    });
+
+    it('should return with "Unknown User" if the request to fetch user fails', async () => {
+      process.env.BITBUCKET_COMMIT = 'e32041305b8573674b6f85068ee95591029f58a0';
+      process.env.BITBUCKET_STEP_TRIGGERER_UUID = '{636fcf11-a096-4b88-99ed-ce185e001fdb}';
+
+      // eslint-disable-next-line global-require
+      const getContext = require('../../lib/context');
+
+      const mock = nock('https://api.bitbucket.org')
+        .get(`/2.0/users/${encodeURIComponent(process.env.BITBUCKET_STEP_TRIGGERER_UUID)}`)
+        .reply(404, {
+          type: 'error',
+          error: {
+            message: 'Error',
+          },
+        });
+
+      await expect(getContext()).resolves.toMatchObject({
+        actor: 'Unknown User',
+        payload: {
+          commits: [
+            {
+              author: {
+                username: 'Unknown User',
+              },
+            },
+          ],
+        },
+      });
+      mock.done();
     });
   });
 });
