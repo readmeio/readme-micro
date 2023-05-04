@@ -19,7 +19,6 @@
     "ci-info": "^3.8.0",
     "command-line-args": "^5.2.1",
     "dotenv": "^16.0.1",
-    "get-function-params": "^2.0.7",
     "glob": "^8.0.3",
     "oas-normalize": "^8.4.0",
     "swagger-inline": "^6.1.0"
