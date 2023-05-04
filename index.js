@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 /* We'll make this better eventually, but for now we'll make it quickly! */
 
 const fs = require('fs');
