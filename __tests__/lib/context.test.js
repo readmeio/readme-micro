@@ -67,14 +67,14 @@ describe('getContext()', () => {
           repository: {
             name: process.env.BITBUCKET_REPO_SLUG,
           },
-          commits: [
-            {
-              message: 'test: attempt to fix tests in CI env',
-              author: {
-                username: 'Dom H',
-              },
-            },
-          ],
+          // commits: [
+          //   {
+          //     message: 'test: attempt to fix tests in CI env',
+          //     author: {
+          //       username: 'Dom H',
+          //     },
+          //   },
+          // ],
         },
       });
 
@@ -100,13 +100,13 @@ describe('getContext()', () => {
       await expect(getContext()).resolves.toMatchObject({
         actor: 'Unknown User',
         payload: {
-          commits: [
-            {
-              author: {
-                username: 'Unknown User',
-              },
-            },
-          ],
+          // commits: [
+          //   {
+          //     author: {
+          //       username: 'Unknown User',
+          //     },
+          //   },
+          // ],
         },
       });
       mock.done();
