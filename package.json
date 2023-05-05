@@ -39,5 +39,8 @@
     "nock": "^13.3.0",
     "prettier": "^2.8.7"
   },
-  "prettier": "@readme/eslint-config/prettier"
+  "prettier": "@readme/eslint-config/prettier",
+  "publishConfig": {
+    "access": "public"
+  }
 }
