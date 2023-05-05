@@ -14,7 +14,10 @@
     "lint": "eslint .",
     "prettier": "prettier --check \"./**/**.{js,md,yaml,json}\"",
     "prettier:fix": "prettier --list-different --write \"./**/**.{js,md,yaml,json}\"",
-    "test": "jest"
+    "test": "jest",
+    "preversion": "echo $npm_package_version > .old-version.txt",
+    "version": "sed -i '' \"s/$(cat .old-version.txt)/$npm_package_version/\" README.md && git add README.md",
+    "postversion": "rm -rf .old-version.txt"
   },
   "author": "",
   "license": "ISC",
