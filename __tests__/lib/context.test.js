@@ -50,6 +50,7 @@ describe('getContext()', () => {
       process.env.BITBUCKET_STEP_TRIGGERER_UUID = '{636fcf11-a096-4b88-99ed-ce185e001fdb}';
       process.env.BITBUCKET_BUILD_NUMBER = '1234';
       process.env.BITBUCKET_REPO_SLUG = 'repo-name';
+      process.env.BITBUCKET_BRANCH = 'main';
 
       // eslint-disable-next-line global-require
       const getContext = require('../../lib/context');
@@ -59,7 +60,7 @@ describe('getContext()', () => {
         .reply(200, { display_name: 'Dom H' });
 
       await expect(getContext()).resolves.toMatchObject({
-        ref: execSync('git rev-parse --abbrev-ref HEAD', { encoding: 'utf-8' }).trim(),
+        ref: `refs/heads/${process.env.BITBUCKET_BRANCH}`,
         sha: process.env.BITBUCKET_COMMIT,
         actor: 'Dom H',
         runId: parseInt(process.env.BITBUCKET_BUILD_NUMBER, 10),
@@ -76,6 +77,25 @@ describe('getContext()', () => {
           //   },
           // ],
         },
+      });
+
+      mock.done();
+    });
+
+    it('should return with a tag ref if there is a tag', async () => {
+      process.env.BITBUCKET_COMMIT = 'e32041305b8573674b6f85068ee95591029f58a0';
+      process.env.BITBUCKET_TAG = '1.0.0';
+      process.env.BITBUCKET_STEP_TRIGGERER_UUID = '{636fcf11-a096-4b88-99ed-xxxxx}';
+
+      // eslint-disable-next-line global-require
+      const getContext = require('../../lib/context');
+
+      const mock = nock('https://api.bitbucket.org')
+        .get(`/2.0/users/${encodeURIComponent(process.env.BITBUCKET_STEP_TRIGGERER_UUID)}`)
+        .reply(200);
+
+      await expect(getContext()).resolves.toMatchObject({
+        ref: `refs/tags/${process.env.BITBUCKET_TAG}`,
       });
 
       mock.done();
