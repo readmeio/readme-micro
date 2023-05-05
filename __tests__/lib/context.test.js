@@ -1,5 +1,3 @@
-const { execSync } = require('child_process');
-
 const nock = require('nock');
 
 nock.disableNetConnect();
