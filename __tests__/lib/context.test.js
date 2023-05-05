@@ -42,6 +42,17 @@ describe('getContext()', () => {
   });
 
   describe('bitbucket', () => {
+    // Ugh, because our CI environment *is* github actions, we have to
+    // nullify the environment variable so that this test passes as a
+    // fake bitbucket environment
+    beforeEach(() => {
+      process.env.GITHUB_ACTIONS = false;
+    });
+
+    afterAll(() => {
+      process.env.GITHUB_ACTIONS = true;
+    });
+
     it('should pull `context` from environment variables', async () => {
       // https://support.atlassian.com/bitbucket-cloud/docs/variables-and-secrets/
       process.env.BITBUCKET_COMMIT = 'e32041305b8573674b6f85068ee95591029f58a0';
