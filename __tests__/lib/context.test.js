@@ -74,17 +74,18 @@ describe('getContext()', () => {
         actor: 'Dom H',
         runId: parseInt(process.env.BITBUCKET_BUILD_NUMBER, 10),
         payload: {
+          commits: [
+            {
+              author: {
+                name: 'Dom H',
+              },
+              message: 'test: attempt to fix tests in CI env',
+              timestamp: '2023-04-12T15:13:33.000Z',
+            },
+          ],
           repository: {
             name: process.env.BITBUCKET_REPO_SLUG,
           },
-          // commits: [
-          //   {
-          //     message: 'test: attempt to fix tests in CI env',
-          //     author: {
-          //       username: 'Dom H',
-          //     },
-          //   },
-          // ],
         },
       });
 
