@@ -26,7 +26,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: GitHub Action
-        uses: readmeio/readme-micro@v2.1.1
+        uses: readmeio/readme-micro@v2.2.0
         with:
           readme-micro: "'**/*.{yaml,yml,json}' --key=\${{ secrets.README_MICRO_SECRET }}"
 ```
@@ -34,7 +34,7 @@ jobs:
 ### As an npm package
 
 ```sh
-npx @readme/micro@v2.1.1 './*{yaml,yml,json}' --key=$README_MICRO_SECRET
+npx @readme/micro@v2.2.0 './*{yaml,yml,json}' --key=$README_MICRO_SECRET
 ```
 
 ### As a Bitbucket Pipeline
@@ -48,5 +48,5 @@ pipelines:
         - step:
             name: ReadMe Micro
             script:
-              - npx @readme/micro@v2.1.1 './*{yaml,yml,json}' --key=$README_MICRO_SECRET
+              - npx @readme/micro@v2.2.0 './*{yaml,yml,json}' --key=$README_MICRO_SECRET
 ```
