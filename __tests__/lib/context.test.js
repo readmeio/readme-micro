@@ -1,3 +1,5 @@
+const { execSync } = require('child_process');
+
 const nock = require('nock');
 
 nock.disableNetConnect();
@@ -49,13 +51,32 @@ describe('getContext()', () => {
       process.env.GITHUB_ACTIONS = false;
     });
 
+    // GitHub actions does a shallow clone, only fetching recent
+    // git history, so we can't rely on an old hash for our test to run
+    // so we're just going to load in the latest commit and use that!
+    let latestCommitSha;
+    let latestCommitMessage;
+    let latestCommitTimestamp;
+
+    beforeAll(async () => {
+      latestCommitSha = await execSync('git rev-parse HEAD');
+      latestCommitMessage = await execSync('git log --format=%B -n 1', {
+        encoding: 'utf-8',
+      }).trim();
+      latestCommitTimestamp = new Date(
+        execSync('git show -s --format=%ct', {
+          encoding: 'utf-8',
+        }).trim() * 1000
+      ).toISOString();
+    });
+
     afterAll(() => {
       process.env.GITHUB_ACTIONS = true;
     });
 
     it('should pull `context` from environment variables', async () => {
       // https://support.atlassian.com/bitbucket-cloud/docs/variables-and-secrets/
-      process.env.BITBUCKET_COMMIT = 'e32041305b8573674b6f85068ee95591029f58a0';
+      process.env.BITBUCKET_COMMIT = latestCommitSha;
       process.env.BITBUCKET_STEP_TRIGGERER_UUID = '{636fcf11-a096-4b88-99ed-ce185e001fdb}';
       process.env.BITBUCKET_BUILD_NUMBER = '1234';
       process.env.BITBUCKET_REPO_SLUG = 'repo-name';
@@ -74,17 +95,18 @@ describe('getContext()', () => {
         actor: 'Dom H',
         runId: parseInt(process.env.BITBUCKET_BUILD_NUMBER, 10),
         payload: {
+          commits: [
+            {
+              author: {
+                name: 'Dom H',
+              },
+              message: latestCommitMessage,
+              timestamp: latestCommitTimestamp,
+            },
+          ],
           repository: {
             name: process.env.BITBUCKET_REPO_SLUG,
           },
-          // commits: [
-          //   {
-          //     message: 'test: attempt to fix tests in CI env',
-          //     author: {
-          //       username: 'Dom H',
-          //     },
-          //   },
-          // ],
         },
       });
 
@@ -92,7 +114,7 @@ describe('getContext()', () => {
     });
 
     it('should return with a tag ref if there is a tag', async () => {
-      process.env.BITBUCKET_COMMIT = 'e32041305b8573674b6f85068ee95591029f58a0';
+      process.env.BITBUCKET_COMMIT = latestCommitSha;
       process.env.BITBUCKET_TAG = '1.0.0';
       process.env.BITBUCKET_STEP_TRIGGERER_UUID = '{636fcf11-a096-4b88-99ed-xxxxx}';
 
@@ -111,7 +133,7 @@ describe('getContext()', () => {
     });
 
     it('should return with "Unknown User" if the request to fetch user fails', async () => {
-      process.env.BITBUCKET_COMMIT = 'e32041305b8573674b6f85068ee95591029f58a0';
+      process.env.BITBUCKET_COMMIT = latestCommitSha;
       process.env.BITBUCKET_STEP_TRIGGERER_UUID = '{636fcf11-a096-4b88-99ed-ce185e001fdb}';
 
       // eslint-disable-next-line global-require
