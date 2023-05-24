@@ -1,6 +1,6 @@
 # @readme/micro
 
-Send your OAS files to [ReadMe Micro](https://micro.readme.build/)
+Send your OAS files to [ReadMe Micro](https://micro.readme.com/)
 
 [![npm](https://img.shields.io/npm/v/@readme/micro)](https://npm.im/@readme/micro) [![Node.js CI](https://github.com/readmeio/readme-micro/actions/workflows/ci.yaml/badge.svg)](https://github.com/readmeio/readme-micro/actions/workflows/ci.yaml)
 
