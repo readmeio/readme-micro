@@ -19,7 +19,7 @@ function filteringRequestBody(body) {
 }
 
 test('should upload specs to micro', async () => {
-  const mock = nock('https://micro.readme.build')
+  const mock = nock('https://micro.readme.com')
     .filteringRequestBody(filteringRequestBody)
     .post(
       '/api/uploadSpec',
@@ -39,7 +39,7 @@ test('should upload specs to micro', async () => {
 });
 
 test('should work for yaml specs', async () => {
-  const mock = nock('https://micro.readme.build')
+  const mock = nock('https://micro.readme.com')
     .filteringRequestBody(filteringRequestBody)
     .post(
       '/api/uploadSpec',
@@ -59,7 +59,7 @@ test('should work for yaml specs', async () => {
 });
 
 test('should work for single quoted yaml specs', async () => {
-  const mock = nock('https://micro.readme.build')
+  const mock = nock('https://micro.readme.com')
     .filteringRequestBody(filteringRequestBody)
     .post(
       '/api/uploadSpec',
@@ -79,7 +79,7 @@ test('should work for single quoted yaml specs', async () => {
 });
 
 test('should bundle specs with file references', async () => {
-  const mock = nock('https://micro.readme.build')
+  const mock = nock('https://micro.readme.com')
     .filteringRequestBody(filteringRequestBody)
     .post(
       '/api/uploadSpec',
@@ -99,7 +99,7 @@ test('should bundle specs with file references', async () => {
 });
 
 test('should work with no files being present', async () => {
-  const mock = nock('https://micro.readme.build')
+  const mock = nock('https://micro.readme.com')
     .filteringRequestBody(filteringRequestBody)
     .post('/api/uploadSpec', JSON.stringify({ specs: [] }))
     .reply(200);

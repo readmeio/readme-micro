@@ -86,7 +86,7 @@ async function main(opts) {
     }
   }
 
-  const base = process.env.BASE_URL || 'https://micro.readme.build';
+  const base = process.env.BASE_URL || 'https://micro.readme.com';
 
   return axios
     .post(`${base}/api/uploadSpec`, out, {
