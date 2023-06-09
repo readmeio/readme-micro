@@ -1,9 +1,18 @@
+const { readFileSync } = require('fs');
+const path = require('path');
+
 const nock = require('nock');
 
 const action = require('..');
 
-const openapiBundled = require('./__fixtures__/openapi-file-resolver-bundled.json');
-const petstore = require('./__fixtures__/petstore.json');
+const openapiBundled = readFileSync(path.join(__dirname, './__fixtures__/openapi-file-resolver-bundled.json'), 'utf8');
+const openapiFileResolver = readFileSync(path.join(__dirname, '/__fixtures__/openapi-file-resolver.json'), 'utf8');
+const petstore = readFileSync(path.join(__dirname, '/__fixtures__/petstore.json'), 'utf8');
+const petstoreYaml = readFileSync(path.join(__dirname, '/__fixtures__/petstore.yaml'), 'utf8');
+const petstoreYamlSingleQuotes = readFileSync(
+  path.join(__dirname, '/__fixtures__/petstore-single-quotes.yaml'),
+  'utf8'
+);
 
 nock.disableNetConnect();
 
@@ -27,7 +36,8 @@ test('should upload specs to micro', async () => {
         specs: [
           {
             fileName: '__tests__/__fixtures__/petstore.json',
-            oas: JSON.stringify(petstore),
+            oas: JSON.stringify(JSON.parse(petstore)),
+            original: petstore,
           },
         ],
       })
@@ -47,7 +57,8 @@ test('should work for yaml specs', async () => {
         specs: [
           {
             fileName: '__tests__/__fixtures__/petstore.yaml',
-            oas: JSON.stringify(petstore),
+            oas: JSON.stringify(JSON.parse(petstore)),
+            original: petstoreYaml,
           },
         ],
       })
@@ -67,7 +78,8 @@ test('should work for single quoted yaml specs', async () => {
         specs: [
           {
             fileName: '__tests__/__fixtures__/petstore-single-quotes.yaml',
-            oas: JSON.stringify(petstore),
+            oas: JSON.stringify(JSON.parse(petstore)),
+            original: petstoreYamlSingleQuotes,
           },
         ],
       })
@@ -87,7 +99,8 @@ test('should bundle specs with file references', async () => {
         specs: [
           {
             fileName: '__tests__/__fixtures__/openapi-file-resolver.json',
-            oas: JSON.stringify(openapiBundled),
+            oas: JSON.stringify(JSON.parse(openapiBundled)),
+            original: openapiFileResolver,
           },
         ],
       })

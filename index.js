@@ -54,6 +54,7 @@ async function main(opts) {
     const file = path.join(process.cwd(), fileName);
     if (fs.existsSync(file)) {
       let oas = {};
+      const original = fs.readFileSync(file, 'utf-8');
       if (fileName === 'api.config.json') {
         /*
         const prepare = await import('./api.js/prepare.js');
@@ -82,6 +83,7 @@ async function main(opts) {
         fileName,
         // eslint-disable-next-line no-await-in-loop
         oas: JSON.stringify(await normalized.bundle()),
+        original,
       });
     }
   }
