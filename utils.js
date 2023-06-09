@@ -3,27 +3,29 @@ const path = require('path');
 
 const glob = require('glob');
 
+function isOpenApiJson(json) {
+  return !!(json.openapi || json.swagger);
+}
+
+function isOpenApiYaml(yaml) {
+  // eslint-disable-next-line unicorn/no-unsafe-regex
+  return !!yaml.match(/\s?(openapi|swagger):\s([\s("|').0-9]+){3,}/);
+}
+
 function filterOas(files) {
   const oas = files.filter(fn => {
     if (fn.match(/.json$/)) {
       try {
         // eslint-disable-next-line import/no-dynamic-require, global-require
         const j = require(path.join(process.cwd(), fn));
-        if (j.openapi || j.swagger) {
-          return true;
-        }
+        return isOpenApiJson(j);
       } catch (e) {
         /* empty */
       }
     }
     if (fn.match(/.(yaml|yml)/)) {
-      // console.log('checking', path.join(process.cwd(), fn));
       const j = fs.readFileSync(path.join(process.cwd(), fn), 'utf8');
-      // eslint-disable-next-line unicorn/no-unsafe-regex
-      const match = j.match(/\s?(openapi|swagger):\s([\s("|').0-9]+){3,}/);
-      // console.log('match?', match);
-
-      if (match) return true;
+      return isOpenApiYaml(j);
     }
     return false;
   });
@@ -53,3 +55,6 @@ module.exports = {
     return out;
   },
 };
+
+module.exports.isOpenApiJson = isOpenApiJson;
+module.exports.isOpenApiYaml = isOpenApiYaml;
