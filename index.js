@@ -12,6 +12,7 @@ const { default: OASNormalize } = require('oas-normalize');
 const swaggerInline = require('swagger-inline');
 
 const getContext = require('./lib/context');
+const pkg = require('./package.json');
 const utils = require('./utils');
 
 require('dotenv').config({ path: path.join(__dirname, '.env') });
@@ -42,6 +43,7 @@ async function main(opts) {
     markdown: undefined, // micro.md file
     specs: [], // the specs {filename, oas}
     ...context,
+    actionMeta: { version: pkg.version }
   };
 
   const markdown = path.join(process.cwd(), 'micro.md');
