@@ -43,7 +43,10 @@ async function main(opts) {
     markdown: undefined, // micro.md file
     specs: [], // the specs {filename, oas}
     ...context,
-    actionMeta: { version: pkg.version }
+    actionMeta: {
+      // version number of this package before published to GH Marketplace & npm
+      version: pkg.version,
+    },
   };
 
   const markdown = path.join(process.cwd(), 'micro.md');
