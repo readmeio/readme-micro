@@ -6,7 +6,7 @@ const nock = require('nock');
 nock.disableNetConnect();
 
 const action = require('..');
-// const { getPkgVersion } = require('../lib/getPkgVersion');
+const { getPkgVersion } = require('../lib/getPkgVersion');
 
 const openapiBundled = readFileSync(path.join(__dirname, './__fixtures__/openapi-file-resolver-bundled.json'), 'utf8');
 const openapiFileResolver = readFileSync(path.join(__dirname, '/__fixtures__/openapi-file-resolver.json'), 'utf8');
@@ -126,25 +126,17 @@ test('should work with no files being present', async () => {
   mock.done();
 });
 
-// function filteringRequestBodyActionVersion(body) {
-//   const { specs, actionVersion } = JSON.parse(body);
-//   return JSON.stringify({ specs, actionVersion });
-// }
-//
-// TODO: this is commented out until I can figure out this error:
-// ::error::Nock: No match for request {%0A  "method": "POST",%0A  "url": "https://micro.readme.com/api/uploadSpec",%0A  "headers": {%0A    "accept": "application/json, text/plain, */*",%0A    "content-type": "application/json",%0A    "x-api-key": "123456",%0A    "user-agent": "axios/0.27.2",%0A    "content-length": 36%0A  },%0A  "body": "{\"specs\":[],\"actionVersion\":\"2.3.0\"}"%0A}
-//
-// eslint-disable-next-line jest/no-commented-out-tests
-// test('should send action package version', async () => {
-//   const mock = nock('https://micro.readme.com')
-//     .filteringRequestBody(filteringRequestBodyActionVersion)
-//     .post('/api/uploadSpec', JSON.stringify({ specs: [], actionVersion: getPkgVersion() }))
-//     .reply(200);
+function filteringRequestBodyActionVersion(body) {
+  const { specs, actionVersion } = JSON.parse(body);
+  return JSON.stringify({ specs, actionVersion });
+}
 
-//   const response = await action({ ...mockConfig, src: ['__tests__/__fixtures__/non-existent-file.json'] });
-//   // mock.done();
+test('should send action package version', async () => {
+  const mock = nock('https://micro.readme.com')
+    .filteringRequestBody(filteringRequestBodyActionVersion)
+    .post('/api/uploadSpec', JSON.stringify({ specs: [], actionVersion: getPkgVersion() }))
+    .reply(200);
 
-//   expect(response).resolves.toMatchObject({ specs: [], actionVersion: getPkgVersion() });
-
-//   return await mock.isDone();
-// });
+  await action({ ...mockConfig, src: ['__tests__/__fixtures__/non-existent-file.json'] });
+  mock.done();
+});
