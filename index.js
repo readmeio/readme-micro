@@ -12,7 +12,7 @@ const { default: OASNormalize } = require('oas-normalize');
 const swaggerInline = require('swagger-inline');
 
 const getContext = require('./lib/context');
-const pkg = require('./package.json');
+const { getPkgVersion } = require('./lib/getPkgVersion');
 const utils = require('./utils');
 
 require('dotenv').config({ path: path.join(__dirname, '.env') });
@@ -43,8 +43,11 @@ async function main(opts) {
     markdown: undefined, // micro.md file
     specs: [], // the specs {filename, oas}
     ...context,
-    // version number of this package that will be published to npm & GH Marketplace
-    actionVersion: version: pkg.version,
+    // this package's version number
+    actionVersion: getPkgVersion(),
+    // adapted from `rdme` Action:
+    // https://github.com/readmeio/rdme/blob/HEAD/src/lib/createGHA/index.ts#L262
+    // https://github.com/readmeio/rdme/blob/HEAD/__tests__/lib/fetch.test.ts#L30
   };
 
   const markdown = path.join(process.cwd(), 'micro.md');
