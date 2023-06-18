@@ -1,6 +1,11 @@
 const getPkgVersion = require('../../lib/getPkgVersion');
 
-jest.mock('../../package.json', () => ({ version: 1.1 }), {
+const mockPkg = {
+  name: 'mock-@readme/micro',
+  version: '1.2.0',
+};
+
+jest.mock('../../package.json', () => mockPkg, {
   virtual: true, // needed to mock a JSON file
 });
 
@@ -15,14 +20,14 @@ describe('#getPkgVersion()', () => {
     // eslint-disable-next-line global-require
     const pkg = require('../../package.json');
 
-    it('should grab version', () => {
-      return expect(getPkgVersion()).toBe(String(pkg.version));
+    it('should correctly grab version', () => {
+      return expect(getPkgVersion()).toBe(pkg.version);
     });
   });
 
-  describe('from mocked package.json', () => {
-    it('should parse numeric version from package.json as string', () => {
-      return expect(getPkgVersion()).toBe('1.1');
+  describe('from mock package.json', () => {
+    it('should correctly grab version', () => {
+      return expect(getPkgVersion()).toBe(mockPkg.version);
     });
   });
 });
