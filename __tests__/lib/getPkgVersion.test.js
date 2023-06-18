@@ -1,4 +1,4 @@
-const { getPkgVersion } = require('../../lib/getPkgVersion');
+const getPkgVersion = require('../../lib/getPkgVersion');
 
 jest.mock('../../package.json', () => ({ version: 1.1 }), {
   virtual: true, // needed to mock a JSON file

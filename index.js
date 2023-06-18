@@ -12,7 +12,7 @@ const { default: OASNormalize } = require('oas-normalize');
 const swaggerInline = require('swagger-inline');
 
 const getContext = require('./lib/context');
-const { getPkgVersion } = require('./lib/getPkgVersion');
+const getPkgVersion = require('./lib/getPkgVersion');
 const utils = require('./utils');
 
 require('dotenv').config({ path: path.join(__dirname, '.env') });

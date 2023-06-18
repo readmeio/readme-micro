@@ -6,7 +6,7 @@ const nock = require('nock');
 nock.disableNetConnect();
 
 const action = require('..');
-const { getPkgVersion } = require('../lib/getPkgVersion');
+const getPkgVersion = require('../lib/getPkgVersion');
 
 const openapiBundled = readFileSync(path.join(__dirname, './__fixtures__/openapi-file-resolver-bundled.json'), 'utf8');
 const openapiFileResolver = readFileSync(path.join(__dirname, '/__fixtures__/openapi-file-resolver.json'), 'utf8');
