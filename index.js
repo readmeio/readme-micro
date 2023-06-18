@@ -43,11 +43,7 @@ async function main(opts) {
     markdown: undefined, // micro.md file
     specs: [], // the specs {filename, oas}
     ...context,
-    // this package's version number
-    actionVersion: getPkgVersion(),
-    // adapted from `rdme` Action:
-    // https://github.com/readmeio/rdme/blob/HEAD/src/lib/createGHA/index.ts#L262
-    // https://github.com/readmeio/rdme/blob/HEAD/__tests__/lib/fetch.test.ts#L30
+    actionVersion: getPkgVersion(), // version of Micro that's running
   };
 
   const markdown = path.join(process.cwd(), 'micro.md');
