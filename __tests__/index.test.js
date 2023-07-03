@@ -3,7 +3,10 @@ const path = require('path');
 
 const nock = require('nock');
 
+nock.disableNetConnect();
+
 const action = require('..');
+const getPkgVersion = require('../lib/getPkgVersion');
 
 const openapiBundled = readFileSync(path.join(__dirname, './__fixtures__/openapi-file-resolver-bundled.json'), 'utf8');
 const openapiFileResolver = readFileSync(path.join(__dirname, '/__fixtures__/openapi-file-resolver.json'), 'utf8');
@@ -14,7 +17,9 @@ const petstoreYamlSingleQuotes = readFileSync(
   'utf8'
 );
 
-nock.disableNetConnect();
+const mockConfig = {
+  key: '123456',
+};
 
 /* We only want to test the oas property on the
  * body because there are a bunch of other
@@ -44,7 +49,7 @@ test('should upload specs to micro', async () => {
     )
     .reply(200);
 
-  await action({ key: '123456', src: ['__tests__/__fixtures__/petstore.json'] });
+  await action({ ...mockConfig, src: ['__tests__/__fixtures__/petstore.json'] });
   mock.done();
 });
 
@@ -65,7 +70,7 @@ test('should work for yaml specs', async () => {
     )
     .reply(200);
 
-  await action({ key: '123456', src: ['__tests__/__fixtures__/petstore.yaml'] });
+  await action({ ...mockConfig, src: ['__tests__/__fixtures__/petstore.yaml'] });
   mock.done();
 });
 
@@ -86,7 +91,7 @@ test('should work for single quoted yaml specs', async () => {
     )
     .reply(200);
 
-  await action({ key: '123456', src: ['__tests__/__fixtures__/petstore-single-quotes.yaml'] });
+  await action({ ...mockConfig, src: ['__tests__/__fixtures__/petstore-single-quotes.yaml'] });
   mock.done();
 });
 
@@ -107,7 +112,7 @@ test('should bundle specs with file references', async () => {
     )
     .reply(200, JSON.stringify({ url: 'https://example.com', explanation: 'Lorem ipsum' }));
 
-  await action({ key: '123456', src: ['__tests__/__fixtures__/openapi-file-resolver.json'] });
+  await action({ ...mockConfig, src: ['__tests__/__fixtures__/openapi-file-resolver.json'] });
   mock.done();
 });
 
@@ -117,6 +122,21 @@ test('should work with no files being present', async () => {
     .post('/api/uploadSpec', JSON.stringify({ specs: [] }))
     .reply(200);
 
-  await action({ key: '123456', src: ['__tests__/__fixtures__/non-existent-file.json'] });
+  await action({ ...mockConfig, src: ['__tests__/__fixtures__/non-existent-file.json'] });
+  mock.done();
+});
+
+function filteringRequestBodyActionVersion(body) {
+  const { specs, actionVersion } = JSON.parse(body);
+  return JSON.stringify({ specs, actionVersion });
+}
+
+test('should send action package version', async () => {
+  const mock = nock('https://micro.readme.com')
+    .filteringRequestBody(filteringRequestBodyActionVersion)
+    .post('/api/uploadSpec', JSON.stringify({ specs: [], actionVersion: getPkgVersion() }))
+    .reply(200);
+
+  await action({ ...mockConfig, src: ['__tests__/__fixtures__/non-existent-file.json'] });
   mock.done();
 });
