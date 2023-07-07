@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const glob = require('glob');
+const ignore = require('ignore');
 
 function isOpenApiJson(json) {
   return !!(json.openapi || json.swagger);
@@ -12,24 +13,21 @@ function isOpenApiYaml(yaml) {
   return !!yaml.match(/\s?(openapi|swagger):\s([\s("|').0-9]+){3,}/);
 }
 
-function filterOas(files) {
-  const oas = files.filter(fn => {
-    if (fn.match(/.json$/)) {
-      try {
-        // eslint-disable-next-line import/no-dynamic-require, global-require
-        const j = require(path.join(process.cwd(), fn));
-        return isOpenApiJson(j);
-      } catch (e) {
-        /* empty */
-      }
+function filterOas(file) {
+  if (file.match(/.json$/)) {
+    try {
+      // eslint-disable-next-line import/no-dynamic-require, global-require
+      const j = require(path.join(process.cwd(), file));
+      return isOpenApiJson(j);
+    } catch (e) {
+      /* empty */
     }
-    if (fn.match(/.(yaml|yml)/)) {
-      const j = fs.readFileSync(path.join(process.cwd(), fn), 'utf8');
-      return isOpenApiYaml(j);
-    }
-    return false;
-  });
-  return oas;
+  }
+  if (file.match(/.(yaml|yml)/)) {
+    const j = fs.readFileSync(path.join(process.cwd(), file), 'utf8');
+    return isOpenApiYaml(j);
+  }
+  return false;
 }
 
 module.exports = {
@@ -46,13 +44,13 @@ module.exports = {
       globs = ['**/*.{yaml,yml,json}'];
     }
 
-    let out = [];
-    globs.forEach(g => {
-      // Concat them and filter dupes
-      const list = filterOas(glob.sync(g));
-      out = out.concat(list.filter(item => out.indexOf(item) < 0));
-    });
-    return out;
+    const GITIGNORE_LOCATION = path.join(__dirname, '.gitignore');
+    const ig = ignore();
+    if (fs.existsSync(GITIGNORE_LOCATION)) {
+      ig.add(fs.readFileSync(GITIGNORE_LOCATION).toString());
+    }
+
+    return glob.sync(globs).filter(ig.createFilter()).filter(filterOas);
   },
 };
 
