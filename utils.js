@@ -44,7 +44,7 @@ module.exports = {
       globs = ['**/*.{yaml,yml,json}'];
     }
 
-    const GITIGNORE_LOCATION = path.join(__dirname, '.gitignore');
+    const GITIGNORE_LOCATION = path.join(process.cwd(), '.gitignore');
     const ig = ignore();
     if (fs.existsSync(GITIGNORE_LOCATION)) {
       ig.add(fs.readFileSync(GITIGNORE_LOCATION).toString());
