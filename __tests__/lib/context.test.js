@@ -79,6 +79,7 @@ describe('getContext()', () => {
       process.env.BITBUCKET_COMMIT = latestCommitSha;
       process.env.BITBUCKET_STEP_TRIGGERER_UUID = '{636fcf11-a096-4b88-99ed-ce185e001fdb}';
       process.env.BITBUCKET_BUILD_NUMBER = '1234';
+      process.env.BITBUCKET_WORKSPACE = 'workspace-name';
       process.env.BITBUCKET_REPO_SLUG = 'repo-name';
       process.env.BITBUCKET_BRANCH = 'main';
 
@@ -105,6 +106,7 @@ describe('getContext()', () => {
             },
           ],
           repository: {
+            organization: process.env.BITBUCKET_WORKSPACE,
             name: process.env.BITBUCKET_REPO_SLUG,
           },
         },
