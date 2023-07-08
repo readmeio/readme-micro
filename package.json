@@ -16,7 +16,7 @@
     "prettier:fix": "prettier --list-different --write \"./**/**.{js,md,yaml,json}\"",
     "test": "jest",
     "preversion": "echo $npm_package_version > .old-version.txt",
-    "version": "sed -i '' \"s/$(cat .old-version.txt)/$npm_package_version/\" README.md && git add README.md",
+    "version": "sed -i '' \"s#micro@[^[:space:]]+#micro@v$(cat .old-version.txt | cut -d '.' -f 1)#g\" README.md && git add README.md || true",
     "postversion": "rm -rf .old-version.txt && ./bin/set-major-version-tag.js"
   },
   "author": "",
