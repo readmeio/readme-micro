@@ -1,6 +1,6 @@
 {
   "name": "@readme/micro",
-  "version": "2.3.0",
+  "version": "2.4.0",
   "description": "Send your OAS files to ReadMe Micro",
   "main": "index.js",
   "bin": "index.js",
