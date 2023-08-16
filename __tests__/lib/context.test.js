@@ -109,6 +109,9 @@ describe('getContext()', () => {
             organization: process.env.BITBUCKET_WORKSPACE,
             name: process.env.BITBUCKET_REPO_SLUG,
           },
+          organization: {
+            login: process.env.BITBUCKET_WORKSPACE,
+          },
         },
       });
 
