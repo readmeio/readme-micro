@@ -13,7 +13,7 @@ Send your OAS files to [ReadMe Micro](https://micro.readme.com/)
 ```yaml
 name: ReadMe Micro
 
-# Run workflow for every push to the `main` branch
+# Run workflow to sync OpenAPI files for every push to the `main` branch
 on:
   push:
     branches:
@@ -43,10 +43,11 @@ npx @readme/micro@v2.4.0 './*{yaml,yml,json}' --key=$README_MICRO_SECRET
 image: node:18
 
 pipelines:
-  default:
-    - parallel:
-        - step:
-            name: ReadMe Micro
-            script:
-              - npx @readme/micro@v2.4.0 './*{yaml,yml,json}' --key=$README_MICRO_SECRET
+  branches:
+    # Run Pipeline to sync OpenAPI files for every push to the `main` branch
+    main:
+      - step:
+          name: ReadMe Micro
+          script:
+            - npx @readme/micro@v2.4.0 './*{yaml,yml,json}' --key=$README_MICRO_SECRET
 ```
