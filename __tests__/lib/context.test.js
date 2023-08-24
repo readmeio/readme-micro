@@ -91,9 +91,9 @@ describe('getContext()', () => {
         .reply(200, { display_name: 'Dom H' });
 
       await expect(getContext()).resolves.toMatchObject({
+        eventName: 'push',
         ref: `refs/heads/${process.env.BITBUCKET_BRANCH}`,
         sha: process.env.BITBUCKET_COMMIT,
-        actor: 'Dom H',
         runId: parseInt(process.env.BITBUCKET_BUILD_NUMBER, 10),
         payload: {
           commits: [
@@ -108,6 +108,9 @@ describe('getContext()', () => {
           repository: {
             organization: process.env.BITBUCKET_WORKSPACE,
             name: process.env.BITBUCKET_REPO_SLUG,
+          },
+          organization: {
+            login: process.env.BITBUCKET_WORKSPACE,
           },
         },
       });
@@ -151,17 +154,52 @@ describe('getContext()', () => {
         });
 
       await expect(getContext()).resolves.toMatchObject({
-        actor: 'Unknown User',
         payload: {
-          // commits: [
-          //   {
-          //     author: {
-          //       username: 'Unknown User',
-          //     },
-          //   },
-          // ],
+          commits: [
+            {
+              author: {
+                name: 'Unknown User',
+              },
+            },
+          ],
         },
       });
+      mock.done();
+    });
+
+    it('should work for `pull_requests`', async () => {
+      process.env.BITBUCKET_COMMIT = latestCommitSha;
+      process.env.BITBUCKET_STEP_TRIGGERER_UUID = '{636fcf11-a096-4b88-99ed-ce185e001fdb}';
+      process.env.BITBUCKET_BUILD_NUMBER = '1234';
+      process.env.BITBUCKET_WORKSPACE = 'workspace-name';
+      process.env.BITBUCKET_REPO_SLUG = 'repo-name';
+      process.env.BITBUCKET_BRANCH = 'main';
+
+      process.env.BITBUCKET_PR_ID = '999';
+
+      // eslint-disable-next-line global-require
+      const getContext = require('../../lib/context');
+
+      const mock = nock('https://api.bitbucket.org')
+        .get(`/2.0/users/${encodeURIComponent(process.env.BITBUCKET_STEP_TRIGGERER_UUID)}`)
+        .reply(200, { display_name: 'Dom H' });
+
+      await expect(getContext()).resolves.toMatchObject({
+        eventName: 'pull_request',
+        ref: `refs/heads/${process.env.BITBUCKET_BRANCH}`,
+        sha: process.env.BITBUCKET_COMMIT,
+        runId: parseInt(process.env.BITBUCKET_BUILD_NUMBER, 10),
+        payload: {
+          number: process.env.BITBUCKET_PR_ID,
+          repository: {
+            name: process.env.BITBUCKET_REPO_SLUG,
+          },
+          organization: {
+            login: process.env.BITBUCKET_WORKSPACE,
+          },
+        },
+      });
+
       mock.done();
     });
   });

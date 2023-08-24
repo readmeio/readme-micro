@@ -18,6 +18,8 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    types: [opened, synchronize]
 jobs:
   sync:
     runs-on: ubuntu-latest
@@ -40,14 +42,20 @@ npx @readme/micro@v2.4.0 './*{yaml,yml,json}' --key=$README_MICRO_SECRET
 ### As a Bitbucket Pipeline
 
 ```yaml
-image: node:18
+definitions:
+  steps:
+    - step: &readme-micro
+        name: ReadMe Micro
+        image: node:18
+        script:
+          - npx @readme/micro@v2.4.0 '**/*.{yaml,yml,json}' --key=$README_MICRO_SECRET
 
+# Run Pipeline to sync OpenAPI files for every push to the `main` branch
 pipelines:
   branches:
-    # Run Pipeline to sync OpenAPI files for every push to the `main` branch
     main:
-      - step:
-          name: ReadMe Micro
-          script:
-            - npx @readme/micro@v2.4.0 './*{yaml,yml,json}' --key=$README_MICRO_SECRET
+      - step: *readme-micro
+  pull-requests:
+    '**':
+      - step: *readme-micro
 ```
