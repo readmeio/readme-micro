@@ -28,7 +28,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: GitHub Action
-        uses: readmeio/readme-micro@v2.4.0
+        uses: readmeio/readme-micro@v2.5.0
         with:
           readme-micro: "'**/*.{yaml,yml,json}' --key=\${{ secrets.README_MICRO_SECRET }}"
 ```
@@ -36,7 +36,7 @@ jobs:
 ### As an npm package
 
 ```sh
-npx @readme/micro@v2.4.0 './*{yaml,yml,json}' --key=$README_MICRO_SECRET
+npx @readme/micro@v2.5.0 './*{yaml,yml,json}' --key=$README_MICRO_SECRET
 ```
 
 ### As a Bitbucket Pipeline
@@ -48,7 +48,7 @@ definitions:
         name: ReadMe Micro
         image: node:18
         script:
-          - npx @readme/micro@v2.4.0 '**/*.{yaml,yml,json}' --key=$README_MICRO_SECRET
+          - npx @readme/micro@v2.5.0 '**/*.{yaml,yml,json}' --key=$README_MICRO_SECRET
 
 # Run Pipeline to sync OpenAPI files for every push to the `main` branch
 pipelines:
