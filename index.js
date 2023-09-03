@@ -90,6 +90,22 @@ async function main(opts) {
     }
   }
 
+  // Now, let's run over OAS specs and make sure they're linted properly
+  // (TODO): check if there is a spectral file
+
+  let hasLintFailure = false;
+  out.specs = await Promise.all(
+    out.specs.map(async s => {
+      const lintResult = await utils.lint(s);
+      if (!lintResult.success) hasLintFailure = true;
+      return { ...s, lint: lintResult };
+    })
+  );
+
+  out.specs.forEach(spec => {
+    console.log(spec.lint);
+  });
+
   const base = process.env.BASE_URL || 'https://micro.readme.com';
 
   return axios
@@ -97,7 +113,10 @@ async function main(opts) {
       headers: { 'X-API-KEY': options.key },
     })
     .then(() => {
-      log('Successfully synced file to ReadMe Micro! 🦉');
+      if (hasLintFailure) {
+        return core.setFailed('Your OAS files failed linting!');
+      }
+      return log('Successfully synced file to ReadMe Micro! 🦉');
     })
     .catch(error => {
       // eslint-disable-next-line no-console
