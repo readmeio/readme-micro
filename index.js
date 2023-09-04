@@ -91,25 +91,27 @@ async function main(opts) {
     }
   }
 
-  const base = process.env.BASE_URL || 'https://micro.readme.com';
+  // Get the base and remove the trailing slash that comes by default from vercel
+  const base = (process.env.BASE_URL || 'https://micro.readme.com').replace(/\/$/, '');
 
   return axios
     .post(`${base}/api/uploadSpec`, out, {
       headers: { 'X-API-KEY': options.key },
     })
-    .then(() => {
-      // TODO: fix this!
-      /*
-      if (hasLintFailure) {
-        if (spec.lint && !spec.lint.success) {
-          console.log(`Linting issues in ${spec.fileName}:`);
-          spec.lint.output.forEach(l => {
+    .then(response => {
+      const body = response.data;
+      if (body.lint?.length) {
+        body.lint.forEach(l => {
+          console.log(`Linting issues in ${l.fileName}:`);
+
+          l.lint.forEach(l => {
             console.error(` ⚠️ ${l.message} (${l.path.join(' > ')})`);
           });
-        }
+
+          console.log('');
+        });
         return core.setFailed('Your OAS files failed linting!');
       }
-      */
       return log('Successfully synced file to ReadMe Micro! 🦉');
     })
     .catch(error => {
