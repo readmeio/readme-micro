@@ -64,13 +64,24 @@ module.exports = {
 
       const myDocument = new Document(spec.oas, Parsers.Json, 'oas');
       const spectral = new Spectral();
+      spectral.setRuleset(`extends: spectral:oas
+  rules:
+    openapi-tags: false
+    operation-tags: false`);
+      /*
       spectral.setRuleset({
-        extends: 'spectral:oas',
+        // this will be our ruleset
         rules: {
-          'openapi-tags': false,
-          'operation-tags': false,
+          'no-empty-description': {
+            given: '$..description',
+            message: 'Description must not be empty',
+            then: {
+              function: truthy,
+            },
+          },
         },
       });
+      */
 
       // we lint our document using the ruleset we passed to the Spectral object
       spectral.run(myDocument).then(results => {
