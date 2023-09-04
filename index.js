@@ -100,6 +100,7 @@ async function main(opts) {
     })
     .then(response => {
       const body = response.data;
+      console.log('body', body);
       if (body.lint?.length) {
         body.lint.forEach(l => {
           console.log(`Linting issues in ${l.fileName}:`);
