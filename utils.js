@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const spectralCore = require('@stoplight/spectral-core');
+const { bundleAndLoadRuleset } = require('@stoplight/spectral-ruleset-bundler/with-loader');
 const { Spectral, Document } = spectralCore;
 const { truthy } = require('@stoplight/spectral-functions'); // this has to be installed as well
 const Parsers = require('@stoplight/spectral-parsers'); // make sure to install the package if you intend to use default parsers!
@@ -61,31 +62,28 @@ module.exports = {
   async lint(spec) {
     return new Promise((resolve, reject) => {
       // this will be our API specification document
-
-      const myDocument = new Document(spec.oas, Parsers.Json, 'oas');
-      const spectral = new Spectral();
-      spectral.setRuleset(`extends: spectral:oas
-  rules:
-    openapi-tags: false
-    operation-tags: false`);
-      /*
-      spectral.setRuleset({
-        // this will be our ruleset
-        rules: {
-          'no-empty-description': {
-            given: '$..description',
-            message: 'Description must not be empty',
-            then: {
-              function: truthy,
-            },
+      const loadRules = {
+        // It's crazy we have to mock `fs` for spectral, but
+        // alas, i guess that's what makes micro valuable?
+        promises: {
+          readFile() {
+            return `extends: spectral:oas
+rules:
+  openapi-tags: off
+  operation-tags: off`;
           },
         },
-      });
-      */
+      };
 
-      // we lint our document using the ruleset we passed to the Spectral object
-      spectral.run(myDocument).then(results => {
-        resolve({ success: !results.length, output: results });
+      bundleAndLoadRuleset(`/.we-need-some-thing-here.yaml`, { fs: loadRules, fetch: false }).then(ruleSet => {
+        const myDocument = new Document(spec.oas, Parsers.Json, 'oas');
+        const spectral = new Spectral();
+        spectral.setRuleset(ruleSet);
+
+        // we lint our document using the ruleset we passed to the Spectral object
+        spectral.run(myDocument).then(results => {
+          resolve({ success: !results.length, output: results });
+        });
       });
     });
   },
