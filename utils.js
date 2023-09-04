@@ -65,15 +65,10 @@ module.exports = {
       const myDocument = new Document(spec.oas, Parsers.Json, 'oas');
       const spectral = new Spectral();
       spectral.setRuleset({
-        // this will be our ruleset
+        extends: 'spectral:oas',
         rules: {
-          'no-empty-description': {
-            given: '$..description',
-            message: 'Description must not be empty',
-            then: {
-              function: truthy,
-            },
-          },
+          'openapi-tags': false,
+          'operation-tags': false,
         },
       });
 
