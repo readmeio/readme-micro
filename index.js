@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable no-console */
 
 /* We'll make this better eventually, but for now we'll make it quickly! */
 
@@ -103,7 +104,11 @@ async function main(opts) {
   );
 
   out.specs.forEach(spec => {
-    console.log(spec.lint);
+    if (spec.lint && !spec.lint.success) {
+      spec.lint.forEach(l => {
+        console.error(`${l.message} (${l.path.join(' > ')})`);
+      });
+    }
   });
 
   const base = process.env.BASE_URL || 'https://micro.readme.com';
