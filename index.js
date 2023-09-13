@@ -1,8 +1,4 @@
 #!/usr/bin/env node
-/* eslint-disable no-console */
-
-/* We'll make this better eventually, but for now we'll make it quickly! */
-
 const fs = require('fs');
 const path = require('path');
 
@@ -100,7 +96,6 @@ async function main(opts) {
     })
     .then(response => {
       const body = response.data;
-      console.log('body', body);
       if (body.lint?.length) {
         body.lint.forEach(l => {
           console.log(`Linting issues in ${l.fileName}:`);
