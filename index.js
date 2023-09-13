@@ -14,12 +14,6 @@ const utils = require('./utils');
 
 require('dotenv').config({ path: path.join(__dirname, '.env') });
 
-function log(...args) {
-  if (process.env.NODE_ENV === 'test') return null;
-  // eslint-disable-next-line no-console
-  return console.log(...args);
-}
-
 async function main(opts) {
   const options = commandLineArgs(
     [
@@ -97,18 +91,16 @@ async function main(opts) {
     .then(response => {
       const body = response.data;
       if (body.lint?.length) {
-        body.lint.forEach(l => {
-          console.log(`Linting issues in ${l.fileName}:`);
+        body.lint.forEach(file => {
+          core.info(`Linting issues in ${file.fileName}:`);
 
-          l.lint.forEach(l => {
-            console.error(` ⚠️ ${l.message} (${l.path.join(' > ')})`);
+          file.result.forEach(l => {
+            core.info(` ⚠️ ${l.message} (${l.path.join(' > ')})`);
           });
-
-          console.log('');
         });
         return core.setFailed('Your OAS files failed linting!');
       }
-      return log('Successfully synced file to ReadMe Micro! 🦉');
+      return core.info('Successfully synced file to ReadMe Micro! 🦉');
     })
     .catch(error => {
       // eslint-disable-next-line no-console
