@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+#!/usr/bin / env node
 const fs = require('fs');
 const path = require('path');
 
@@ -95,7 +95,7 @@ async function main(opts) {
           core.info(`Linting issues in ${file.fileName}:`);
 
           file.result.forEach(l => {
-            core.info(` ⚠️ ${l.message} (${l.path.join(' > ')})`);
+            core.info(`  ⚠️ ${l.message} (${l.path.join(' > ')})`);
           });
         });
         return core.setFailed('Your OAS files failed linting!');
