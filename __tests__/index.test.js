@@ -140,3 +140,59 @@ test('should send action package version', async () => {
   await action({ ...mockConfig, src: ['__tests__/__fixtures__/non-existent-file.json'] });
   mock.done();
 });
+
+// This approach of testing the stdout input came from github's module
+// https://github.com/actions/toolkit/blob/c5c786523e095ca3fabfc4d345e16242da34e108/packages/core/__tests__/command.test.ts
+describe('logging output', () => {
+  let processStdoutWrite;
+
+  beforeEach(() => {
+    processStdoutWrite = process.stdout.write;
+    process.stdout.write = jest.fn();
+  });
+
+  afterAll(() => {
+    process.stdout.write = processStdoutWrite;
+  });
+
+  it('should output a message on successful sync', async () => {
+    const mock = nock('https://micro.readme.com').post('/api/uploadSpec').reply(200);
+
+    await action({ ...mockConfig, src: ['__tests__/__fixtures__/petstore.json'] });
+    expect(process.stdout.write).toHaveBeenCalledTimes(1);
+    expect(process.stdout.write).toHaveBeenNthCalledWith(1, 'Successfully synced file to ReadMe Micro! 🦉\n');
+
+    mock.done();
+  });
+
+  it('should output lint warnings on failure', async () => {
+    const fileName = '__tests__/__fixtures__/petstore.json';
+    const mock = nock('https://micro.readme.com')
+      .post('/api/uploadSpec')
+      .reply(200, {
+        success: true,
+        lint: [
+          {
+            fileName,
+            result: [
+              {
+                code: 'info-description',
+                message: 'Info "description" must be present and non-empty string.',
+                path: ['info', 'description'],
+              },
+            ],
+          },
+        ],
+      });
+
+    await action({ ...mockConfig, src: [fileName] });
+    expect(process.stdout.write).toHaveBeenCalledTimes(3);
+    expect(process.stdout.write.mock.calls[0][0]).toBe(`Linting issues in ${fileName}:\n`);
+    expect(process.stdout.write.mock.calls[1][0]).toBe(
+      '  ⚠️ Info "description" must be present and non-empty string. (info > description)\n'
+    );
+    expect(process.stdout.write.mock.calls[2][0]).toBe('::error::Your OAS files failed linting!\n');
+
+    mock.done();
+  });
+});

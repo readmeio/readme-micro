@@ -1,7 +1,4 @@
 #!/usr/bin/env node
-
-/* We'll make this better eventually, but for now we'll make it quickly! */
-
 const fs = require('fs');
 const path = require('path');
 
@@ -16,12 +13,6 @@ const getPkgVersion = require('./lib/getPkgVersion');
 const utils = require('./utils');
 
 require('dotenv').config({ path: path.join(__dirname, '.env') });
-
-function log(...args) {
-  if (process.env.NODE_ENV === 'test') return null;
-  // eslint-disable-next-line no-console
-  return console.log(...args);
-}
 
 async function main(opts) {
   const options = commandLineArgs(
@@ -90,14 +81,26 @@ async function main(opts) {
     }
   }
 
-  const base = process.env.BASE_URL || 'https://micro.readme.com';
+  // Get the base and remove the trailing slash that comes by default from vercel
+  const base = (process.env.BASE_URL || 'https://micro.readme.com').replace(/\/$/, '');
 
   return axios
     .post(`${base}/api/uploadSpec`, out, {
       headers: { 'X-API-KEY': options.key },
     })
-    .then(() => {
-      log('Successfully synced file to ReadMe Micro! 🦉');
+    .then(response => {
+      const body = response.data;
+      if (body.lint?.length) {
+        body.lint.forEach(file => {
+          core.info(`Linting issues in ${file.fileName}:`);
+
+          file.result.forEach(l => {
+            core.info(`  ⚠️ ${l.message} (${l.path.join(' > ')})`);
+          });
+        });
+        return core.setFailed('Your OAS files failed linting!');
+      }
+      return core.info('Successfully synced file to ReadMe Micro! 🦉');
     })
     .catch(error => {
       // eslint-disable-next-line no-console
