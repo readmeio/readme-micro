@@ -16,10 +16,9 @@ name: ReadMe Micro
 # Run workflow to sync OpenAPI files for every push to the `main` branch
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
-    types: [opened, synchronize]
+    branches: [main]
 jobs:
   sync:
     runs-on: ubuntu-latest
@@ -27,6 +26,7 @@ jobs:
       - name: Checkout this repo
         uses: actions/checkout@v3
 
+      # Run GitHub Action to sync all OpenAPI files in the repo
       - name: GitHub Action
         uses: readmeio/readme-micro@v2.6.0
         with:
