@@ -4,7 +4,7 @@ Send your OAS files to [ReadMe Micro](https://micro.readme.com/)
 
 [![npm](https://img.shields.io/npm/v/@readme/micro)](https://npm.im/@readme/micro) [![Node.js CI](https://github.com/readmeio/readme-micro/actions/workflows/ci.yaml/badge.svg)](https://github.com/readmeio/readme-micro/actions/workflows/ci.yaml)
 
-[![](https://d3vv6lp55qjaqc.cloudfront.net/items/1M3C3j0I0s0j3T362344/Untitled-2.png)](https://readme.io)
+[![](https://raw.githubusercontent.com/readmeio/.github/main/oss-header.png)](https://readme.io)
 
 ## Usage
 
